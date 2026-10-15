@@ -1,1 +1,31 @@
-plugins { id 'com.android.application' version '8.7.3' apply false }
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.mrall.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.mrall.app'
+        minSdk 23
+        targetSdk 35
+        versionCode 2
+        versionName '2.0.0'
+    }
+}
+
+configurations.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.jetbrains.kotlin' &&
+            details.requested.name.startsWith('kotlin-stdlib')) {
+            details.useVersion '1.8.22'
+            details.because 'Align Kotlin standard library versions'
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.webkit:webkit:1.13.0'
+}
