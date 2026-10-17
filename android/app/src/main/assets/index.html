@@ -1025,7 +1025,7 @@ function saveCatEditor(){
         const id=(mapped&&mapped.id)||(same&&same.id)||storeUuid('mrall-business-store-v1|'+key);
         const first=db.cat[g.indices[0]]||{};
         const price=storeSellPrice(g),stock=g.indices.length;
-        const product={id,name,price,old_price:null,stock,category_id:category.id,image_url:first.image_url||first.image||null,flash_sale:false,promo_start:null,promo_end:null,active:true,product_status:stock>0?'ready':'sold'};
+        const imageCandidate=String(first.image_url||first.image||'');const product={id,name,price,old_price:null,stock,category_id:category.id,image_url:/^https?:\/\//i.test(imageCandidate)?imageCandidate:null,flash_sale:false,promo_start:null,promo_end:null,active:true,product_status:stock>0?'ready':'sold'};
         const {error}=await c.from('products').upsert(product,{onConflict:'id'});
         if(error)throw new Error(name+': '+error.message);
         published[key]={id,category_id:category.id,name,category:category.name};
