@@ -7,7 +7,7 @@
   var DB_KEY='mrall_business_cutover_20261014_v2';
   var SELECTION_KEY='mrall_business_store_publish_selection_v1';
   var items=[];
-  var autoSyncTimer=null,autoSyncBusy=false;
+  var autoSyncTimer=null,autoSyncBusy=false,autoSyncPending=false;
   function byId(id){return document.getElementById(id)}
   function clean(v){return String(v==null?'':v).trim().replace(/\s+/g,' ')}
   function norm(v){return clean(v).toLowerCase()}
@@ -101,7 +101,7 @@
   // Debounced automatic stock refresh for already-published product keys only.
   // Network errors never block or roll back the local Business save.
   window.v2StoreAutoSync=async function(){
-    if(autoSyncBusy)return;
+    if(autoSyncBusy){autoSyncPending=true;return}
     var keys=readSelectedKeys();
     if(!keys.size)return;
     autoSyncBusy=true;
@@ -118,7 +118,7 @@
       message('Auto-sync stok berhasil • '+new Date().toLocaleTimeString('id-ID')+'. Halaman Store memperbarui stok maksimal sekitar 30 detik.',true);
     }catch(e){
       message('Auto-sync belum berhasil: '+(e&&e.message?e.message:String(e))+'. Data lokal Business tetap tersimpan; coba sinkron manual saat online.',false);
-    }finally{autoSyncBusy=false}
+    }finally{autoSyncBusy=false;if(autoSyncPending){autoSyncPending=false;window.v2StoreAutoScheduleSync()}}
   };
   window.v2StoreAutoScheduleSync=function(){
     if(autoSyncTimer)clearTimeout(autoSyncTimer);
