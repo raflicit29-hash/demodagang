@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a1020">
+<title>Sinkron Stok ke Store — MR ALL IN Business</title>
+<style>
+:root{color-scheme:dark;--bg:#080d19;--panel:#111a2b;--panel2:#17243a;--text:#edf4ff;--muted:#9aabc5;--line:#293a53;--blue:#5bc7ff;--purple:#a78bfa;--green:#42d6a4;--red:#ff8a98;--gold:#f5c76a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#17284b 0,transparent 38%),radial-gradient(circle at 100% 10%,#321d52 0,transparent 32%),var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#47c8ff,#8c69ff);box-shadow:0 7px 28px #6e75ff30;font-size:23px}.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.pill{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--muted)}.hero{border:1px solid #344363;background:linear-gradient(120deg,#152845e8,#251b40eb);border-radius:23px;padding:23px;margin-bottom:16px;box-shadow:0 18px 60px #0004}.hero h2{font-size:clamp(22px,4vw,32px);margin:0 0 7px}.hero p{margin:0;color:#bdcce3;max-width:780px}.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:16px;align-items:start}.panel{background:#101a2acc;border:1px solid var(--line);border-radius:19px;padding:17px;min-width:0}.panel h3{margin:0 0 6px;font-size:17px}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}.formrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.field{width:100%;padding:11px 12px;background:#0b1322;border:1px solid var(--line);border-radius:11px;color:var(--text);outline:none}.field:focus{border-color:var(--blue)}button,.btn{border:1px solid transparent;border-radius:11px;padding:10px 13px;cursor:pointer;font:inherit;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,filter .15s}button:hover,.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.primary{background:linear-gradient(100deg,#3bb9f4,#8171f3);color:#07111f}.secondary{background:#192a42;color:var(--text);border-color:#344761}.success{background:#1c594b;color:#a9ffdf;border-color:#286d5b}.warning{background:#5d4521;color:#ffe3a1;border-color:#8e682a}.danger{color:#ffb5bf}.notice{padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#0b1423;margin:10px 0;overflow-wrap:anywhere}.notice.good{border-color:#286d5b;color:#a9ffdf}.notice.warn{border-color:#8e682a;color:#ffe3a1}.notice.bad{border-color:#803c4c;color:#ffb5bf}.hidden{display:none!important}.statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:15px 0}.stat{background:#0b1423;border:1px solid var(--line);padding:12px;border-radius:14px}.stat b{display:block;font-size:22px;margin-top:3px}.stat span{font-size:12px;color:var(--muted)}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:13px 0}.search{flex:1;min-width:160px}.list{display:grid;gap:9px}.item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;padding:12px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(130deg,#121f33,#0d1524)}.item.selected{border-color:#5a65a8;background:linear-gradient(130deg,#152942,#211a39)}.check{width:20px;height:20px;accent-color:#8b7aff;margin-top:3px}.itemmain{min-width:0}.itemhead{display:flex;justify-content:space-between;gap:8px;align-items:start}.itemtitle{font-weight:800;overflow-wrap:anywhere}.meta{font-size:12px;color:var(--muted);margin-top:3px}.money{font-weight:800;color:#8ce7c4;white-space:nowrap}.itemcontrols{display:grid;grid-template-columns:minmax(0,1fr) minmax(145px, .85fr);gap:8px;margin-top:10px}.badge{display:inline-flex;font-size:11px;border-radius:7px;padding:3px 7px;border:1px solid var(--line);color:#cad8ed}.badge.ready{color:#8ce7c4;border-color:#286d5b}.badge.sold{color:#ffb5bf;border-color:#803c4c}.split{display:grid;gap:9px}.bullet{display:flex;gap:8px;align-items:flex-start}.bullet i{font-style:normal;color:var(--green)}.sourcebar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.hr{height:1px;background:var(--line);margin:14px 0}a{color:#88d8ff}.foot{padding:18px 0 6px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:840px){.grid{grid-template-columns:1fr}.wrap{padding:13px}.hero{padding:18px}.panel{padding:13px}.top{align-items:flex-start}.statgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.stat b{font-size:18px}}@media(max-width:480px){.itemhead{display:block}.money{display:block;margin-top:5px}.itemcontrols{grid-template-columns:1fr}.pill{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand"><div class="logo">↗</div><div><h1>MR ALL IN <span style="color:#70d4ff">BUSINESS</span></h1><p>Publikasikan stok terpilih ke website Store</p></div></div><span class="pill">Tahap 1 · Business → Store</span></header>
+<section class="hero"><h2>Stok Business, tampil di Store. ✨</h2><p>Pilih produk yang benar-benar siap dijual, cocokkan kategorinya, lalu sinkronkan. Business tetap menjadi sumber utama stok; harga dan jumlah stok publik diperbarui dari snapshot atau data lokal yang kamu pilih.</p></section>
+<div class="grid">
+<section class="panel">
+<h3>1. Hubungkan akun admin</h3><p class="small">Gunakan akun admin Store. Halaman ini memakai project Store yang sama dengan katalog publik. Tidak meminta secret key.</p>
+<div id="projectStatus" class="notice">Memeriksa konfigurasi...</div>
+<div id="authBox">
+<div class="split"><input id="email" class="field" type="email" autocomplete="username" placeholder="Email admin Store"><input id="password" class="field" type="password" autocomplete="current-password" placeholder="Password Supabase"></div>
+<div class="toolbar"><button id="loginBtn" class="primary">Masuk</button><button id="logoutBtn" class="secondary hidden">Keluar</button><span id="authStatus" class="small">Belum masuk.</span></div>
+</div>
+<div class="hr"></div>
+<div class="sourcebar"><div><h3>2. Pilih sumber inventaris</h3><p class="small">Gunakan data lokal browser jika kamu membuka halaman ini dari browser Business yang sama, atau ambil snapshot cloud terbaru.</p></div></div>
+<div class="toolbar"><button id="localBtn" class="secondary">📱 Muat data lokal</button><button id="cloudBtn" class="secondary">☁️ Ambil snapshot cloud</button></div>
+<div id="sourceStatus" class="notice">Belum memuat inventaris.</div>
+<div class="statgrid"><div class="stat"><span>Item ditampilkan</span><b id="countItems">0</b></div><div class="stat"><span>Ready</span><b id="countReady">0</b></div><div class="stat"><span>Sudah di Store</span><b id="countPublished">0</b></div></div>
+<div class="toolbar"><input id="search" class="field search" placeholder="Cari model, brand, kategori..."><button id="selectReadyBtn" class="secondary">Pilih semua Ready</button><button id="clearBtn" class="secondary">Batalkan pilihan</button></div>
+<div id="items" class="list"><div class="notice">Login dan muat data untuk menampilkan stok.</div></div>
+<div class="toolbar"><button id="publishBtn" class="primary" disabled>🚀 Sinkronkan produk terpilih</button><span id="publishStatus" class="small"></span></div>
+</section>
+<aside class="panel">
+<h3>Yang akan tersinkron</h3><div class="split">
+<div class="bullet"><i>✓</i><div><b>Nama produk</b><div class="small">Dari model, brand, dan kapasitas di Business.</div></div></div>
+<div class="bullet"><i>✓</i><div><b>Harga jual</b><div class="small">Harga jual yang tersimpan di inventaris Business.</div></div></div>
+<div class="bullet"><i>✓</i><div><b>Jumlah stok</b><div class="small">Item unit tunggal: 1 jika Ready, 0 jika SOLD. Bulk: jumlah batch yang tersisa.</div></div></div>
+<div class="bullet"><i>✓</i><div><b>Status publik</b><div class="small">READY atau TERJUAL di Store. Barang terjual yang pernah dipublikasikan tetap terdaftar dengan stok 0.</div></div></div>
+</div>
+<div class="hr"></div><h3>Yang tidak ditimpa</h3><div class="split">
+<div class="bullet"><i>•</i><div>Foto produk, Flash Sale, harga promo, dan jadwal promosi di Store tetap dipertahankan saat update.</div></div>
+<div class="bullet"><i>•</i><div>Produk yang tidak dipilih tidak diubah.</div></div>
+<div class="bullet"><i>•</i><div>Stok Business tidak diubah oleh halaman ini.</div></div>
+</div>
+<div class="notice warn">Penting: halaman ini memakai snapshot Business yang sudah di-upload ke cloud jika data lokal browser tidak tersedia. Pastikan snapshot cloud paling baru sebelum sinkron dari perangkat lain.</div>
+<div class="notice warn">Kategori Business yang belum cocok harus dipetakan secara manual. Item berstatus STOK RETUR dilewati otomatis pada tahap ini agar stok tidak salah terhitung.</div>
+<div class="notice">Jika project URL Business berbeda dari Store, sinkronisasi akan dihentikan. Jangan memindahkan atau membagikan secret key; integrasi lintas-project butuh backend terpisah.</div>
+<div class="toolbar"><a class="btn secondary" href="./index.html">← Kembali ke Business</a><a class="btn secondary" href="https://raflicit29-hash.github.io/mrallstore/" target="_blank" rel="noopener">Buka Website Store ↗</a></div>
+</aside>
+</div>
+<footer class="foot">MR ALL IN · Publikasi stok satu arah · Tidak mengubah data bisnis.</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+const STORE_URL='https://sjwmeoqctebgilpvfzmd.supabase.co';
+const STORE_KEY='sb_publishable_0r10zRJ4HOI9bfOFZJeliw_QIqN-q4T';
+const CFG_KEY='mrall_business_supabase_config_v2';
+const DB_KEY='mrall_business_cutover_20261014_v2';
+const ADMIN_EMAIL='raflicit29@gmail.com';
+const $=id=>document.getElementById(id);
+const state={client:null,user:null,db:null,source:'',snapshotAt:null,categories:[],existing:new Map(),items:[],selected:new Set(),busy:false};
+function normalizeUrl(s){return String(s||'').trim().replace(/\/+$/,'').toLowerCase();}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
+function rp(n){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0);}
+function setNotice(id,msg,kind){const el=$(id);el.className='notice'+(kind?' '+kind:'');el.textContent=msg;}
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16);}
+function getClient(){if(!window.supabase||!window.supabase.createClient)throw new Error('Library Supabase gagal dimuat. Periksa koneksi internet lalu refresh.');if(!state.client){state.client=window.supabase.createClient(STORE_URL,STORE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}return state.client;}
+function savedConfig(){try{return JSON.parse(localStorage.getItem(CFG_KEY)||'{}');}catch(e){return {};}}
+function checkProject(){
+ const cfg=savedConfig();
+ if(cfg.url&&normalizeUrl(cfg.url)!==normalizeUrl(STORE_URL)){
+  setNotice('projectStatus','STOP: Project URL Business ('+cfg.url+') berbeda dari project Store ('+STORE_URL+'). Jangan sinkron lintas-project dari browser. Kita perlu jalur backend yang aman.','bad');
+  $('loginBtn').disabled=true;return false;
+ }
+ setNotice('projectStatus','Project URL cocok dengan katalog Store. Publish key bersifat publik; perubahan tetap dibatasi oleh Supabase Auth/RLS.','good');
+ return true;
+}
+async function init(){
+ if(!checkProject())return;
+ try{
+   const c=getClient();const {data,error}=await c.auth.getSession();if(error)throw error;
+   if(data.session) await applySession(data.session.user);
+   else {$('authStatus').textContent='Belum masuk.';}
+ }catch(e){setNotice('projectStatus','Koneksi Supabase belum siap: '+e.message,'bad');}
+}
+async function applySession(user){
+ state.user=user||null;
+ const ok=!!user&&(String(user.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase());
+ if(!user){$('authStatus').textContent='Belum masuk.';$('loginBtn').classList.remove('hidden');$('logoutBtn').classList.add('hidden');$('publishBtn').disabled=true;return;}
+ $('authStatus').textContent=ok?'Login sebagai '+user.email:(user.email||'Akun bukan admin Store.');
+ $('loginBtn').classList.add('hidden');$('logoutBtn').classList.remove('hidden');
+ if(!ok){$('publishBtn').disabled=true;setNotice('projectStatus','Akun ini bukan admin Store yang diizinkan. Keluar lalu masuk menggunakan akun admin Store.','bad');return;}
+ setNotice('projectStatus','Terhubung sebagai admin '+user.email+'.','good');
+ try{await loadStoreData();}catch(e){setNotice('sourceStatus','Gagal memuat kategori/katalog. Pastikan migration 002 sudah dijalankan. Detail: '+e.message,'bad');}
+}
+async function login(){
+ const email=$('email').value.trim().toLowerCase();const password=$('password').value;
+ if(!email||!password){$('authStatus').textContent='Masukkan email dan password.';return;}
+ if(email!==ADMIN_EMAIL.toLowerCase()){$('authStatus').textContent='Gunakan email admin Store yang benar.';return;}
+ $('loginBtn').disabled=true;$('authStatus').textContent='Memeriksa login...';
+ try{const {data,error}=await getClient().auth.signInWithPassword({email,password});if(error)throw error;await applySession(data.user);}
+ catch(e){$('authStatus').textContent='Login gagal: '+e.message;}
+ finally{$('loginBtn').disabled=false;}
+}
+async function logout(){try{await getClient().auth.signOut();state.user=null;state.items=[];state.selected.clear();$('items').innerHTML='<div class="notice">Sudah keluar. Login kembali untuk sinkron.</div>';$('publishBtn').disabled=true;$('loginBtn').classList.remove('hidden');$('logoutBtn').classList.add('hidden');$('authStatus').textContent='Sudah keluar.';}catch(e){$('authStatus').textContent='Gagal keluar: '+e.message;}}
+async function loadStoreData(){
+ const c=getClient();
+ const [cats,prods]=await Promise.all([
+  c.from('categories').select('id,name,active,sort_order').eq('active',true).order('sort_order'),
+  c.from('products').select('id,business_source_id,category_id,image_url,old_price,flash_sale,promo_start,promo_end').not('business_source_id','is',null)
+ ]);
+ if(cats.error)throw cats.error;
+ if(prods.error)throw new Error('Gagal membaca produk sinkron. Jalankan migration supabase/migrations/002_business_source_sync.sql di project Store. '+prods.error.message);
+ state.categories=cats.data||[];
+ state.existing=new Map((prods.data||[]).map(p=>[p.business_source_id,p]));
+ renderItems();
+}
+function localDb(){
+ try{const d=JSON.parse(localStorage.getItem(DB_KEY)||'null');if(d&&Array.isArray(d.cat)&&Array.isArray(d.gar)&&Array.isArray(d.wd))return d;}catch(e){}
+ return null;
+}
+async function useLocal(){
+ const d=localDb();
+ if(!d){setNotice('sourceStatus','Data lokal Business tidak ditemukan pada browser ini. Kalau data ada di APK/WebView, klik Ambil snapshot cloud setelah melakukan Upload di aplikasi Business.','warn');return;}
+ state.db=d;state.source='local';state.snapshotAt=null;buildItems();
+ setNotice('sourceStatus','Sumber: data lokal browser ini. Ini adalah data yang tersimpan di browser/origin Business saat ini; snapshot cloud mungkin berbeda.','good');
+}
+async function useCloud(){
+ if(!state.user){setNotice('sourceStatus','Login admin dahulu untuk mengambil snapshot cloud.','warn');return;}
+ setNotice('sourceStatus','Mengambil snapshot Business dari cloud...','');
+ try{
+  const {data,error}=await getClient().from('mrall_business_snapshots').select('data,updated_at').eq('user_id',state.user.id).maybeSingle();
+  if(error)throw error;
+  if(!data||!data.data)throw new Error('Snapshot tidak ditemukan di project Store. Upload data terbaru dari Cloud di aplikasi Business, atau pastikan kedua aplikasi memakai project yang sama.');
+  if(!Array.isArray(data.data.cat)||!Array.isArray(data.data.gar)||!Array.isArray(data.data.wd))throw new Error('Struktur snapshot Business tidak cocok.');
+  state.db=data.data;state.source='cloud';state.snapshotAt=data.updated_at;buildItems();
+  setNotice('sourceStatus','Sumber: snapshot cloud diperbarui '+new Date(data.updated_at).toLocaleString('id-ID')+'. Pastikan ini upload terbaru dari Business.','good');
+ }catch(e){setNotice('sourceStatus','Gagal mengambil snapshot: '+e.message,'bad');}
+}
+function titleFor(x){const brand=String(x.brand||'').trim(),model=String(x.model||'').trim(),cap=String(x.cap||'').trim();let base=model;if(brand&&!model.toLowerCase().includes(brand.toLowerCase()))base=brand+' '+base;return (base+' '+cap).trim()||'Produk MR ALL IN';}
+function categoryOf(x){return String(x.cat||x.category||'').trim();}
+function statusNorm(x){return String(x.status||'').trim().toLowerCase();}
+function makeItems(db){
+ const result=[],occ={};
+ (db.cat||[]).forEach(function(x){
+  const status=statusNorm(x);
+  if(status==='stok retur')return;
+  if(status!=='ready'&&status!=='sold'&&status!=='terjual')return;
+  const base=[x.date||'',x.seller||'',x.model||'',x.cap||'',x.brand||'',Number(x.buy)||0].join('|').toLowerCase();
+  const ordinal=occ[base]||0;occ[base]=ordinal+1;
+  const source='mrall:cat:'+hash(base)+':'+ordinal;
+  result.push({source,type:'unit',name:titleFor(x),sourceCategory:categoryOf(x),price:Number(x.sell)||0,stock:(status==='ready'?1:0),status:(status==='ready'?'ready':'sold'),image:(typeof x.image==='string'&&/^https?:\/\//i.test(x.image)?x.image:null),detail:'Unit · '+(x.status||'')+' · '+(x.date||'tanggal tidak tersedia')});
+ });
+ (db.bulk||[]).forEach(function(x,index){
+  const id=String(x.id||('fallback-'+hash([x.model,x.brand,x.cap,x.cat,index].join('|'))));
+  const source='mrall:bulk:'+id;
+  const batches=Array.isArray(x.batches)?x.batches:[];
+  const stock=batches.reduce((n,b)=>n+Math.max(0,Number(b.remaining)||0),0);
+  const remainingBatches=batches.filter(b=>(Number(b.remaining)||0)>0);
+  const price=remainingBatches.length?(Number(remainingBatches[remainingBatches.length-1].sellPer)||0):(Number(x.defaultSell)||0);
+  if(stock<=0&&!state.existing.has(source))return;
+  result.push({source,type:'bulk',name:titleFor(x),sourceCategory:categoryOf(x),price,stock,status:stock>0?'ready':'sold',image:(typeof x.image==='string'&&/^https?:\/\//i.test(x.image)?x.image:null),detail:'Bulk · '+stock+' pcs tersisa'});
+ });
+ return result;
+}
+function buildItems(){
+ state.items=makeItems(state.db||{});
+ state.selected=new Set();
+ state.items.forEach(function(item){
+  if(state.existing.has(item.source))state.selected.add(item.source);
+ });
+ $('countItems').textContent=String(state.items.length);
+ $('countReady').textContent=String(state.items.filter(x=>x.stock>0).length);
+ $('countPublished').textContent=String(state.items.filter(x=>state.existing.has(x.source)).length);
+ renderItems();
+}
+function renderItems(){
+ const q=$('search').value.trim().toLowerCase();
+ const list=state.items.filter(x=>(x.name+' '+x.sourceCategory+' '+x.detail).toLowerCase().includes(q));
+ if(!list.length){$('items').innerHTML='<div class="notice">Tidak ada item cocok. Muat data lokal atau snapshot cloud dahulu.</div>';$('publishBtn').disabled=!state.user||!state.items.length;return;}
+ const cats=state.categories;
+ $('items').innerHTML=list.map(function(x){
+  const existing=state.existing.get(x.source);
+  let guessed=existing?existing.category_id:null;
+  if(!guessed){const m=cats.find(c=>String(c.name).trim().toLowerCase()===x.sourceCategory.toLowerCase());if(m)guessed=m.id;}
+  const options='<option value="">Pilih kategori Store…</option>'+cats.map(function(c){return '<option value="'+esc(c.id)+'" '+(String(guessed)===String(c.id)?'selected':'')+'>'+esc(c.name)+'</option>';}).join('');
+  return '<div class="item '+(state.selected.has(x.source)?'selected':'')+'" data-key="'+esc(x.source)+'">'+
+   '<input class="check rowcheck" type="checkbox" '+(state.selected.has(x.source)?'checked':'')+' aria-label="Pilih '+esc(x.name)+'">'+
+   '<div class="itemmain"><div class="itemhead"><div><div class="itemtitle">'+esc(x.name)+'</div><div class="meta">'+esc(x.sourceCategory||'Kategori Business belum diisi')+' · '+esc(x.detail)+'</div></div><div class="money">'+rp(x.price)+'</div></div>'+
+   '<div class="toolbar" style="margin:7px 0 0"><span class="badge '+(x.stock>0?'ready':'sold')+'">'+(x.stock>0?'READY':'TERJUAL / STOK 0')+'</span><span class="badge">'+(existing?'Sudah dipublikasikan':'Belum dipublikasikan')+'</span></div>'+
+   '<div class="itemcontrols"><select class="field category-select" aria-label="Kategori Store">'+options+'</select><div class="small">Stok Store: <b>'+Number(x.stock)+'</b> · '+(x.image?'Foto URL tersedia':'Foto Store akan dipertahankan / ditambahkan lewat Admin Store')+'</div></div></div></div>';
+ }).join('');
+ $('items').querySelectorAll('.item').forEach(function(el){
+  const key=el.getAttribute('data-key');
+  const cb=el.querySelector('.rowcheck');
+  cb.addEventListener('change',function(){if(cb.checked)state.selected.add(key);else state.selected.delete(key);el.classList.toggle('selected',cb.checked);updatePublishButton();});
+ });
+ updatePublishButton();
+}
+function updatePublishButton(){const count=state.selected.size;$('publishBtn').disabled=!state.user||!state.db||state.busy||count===0;$('publishBtn').textContent='🚀 Sinkronkan '+count+' produk terpilih';}
+function selectReady(){state.items.filter(x=>x.stock>0).forEach(x=>state.selected.add(x.source));renderItems();}
+function clearSelect(){state.selected.clear();renderItems();}
+function categoryFor(key){const row=$('items').querySelector('.item[data-key="'+CSS.escape(key)+'"]');return row?row.querySelector('.category-select').value:'';}
+async function publish(){
+ if(state.busy)return;
+ if(!state.user||String(state.user.email||'').toLowerCase()!==ADMIN_EMAIL.toLowerCase())return setNotice('publishStatus','Login admin Store diperlukan.','bad');
+ if(!state.db)return setNotice('publishStatus','Muat data Business dahulu.','bad');
+ const selected=state.items.filter(x=>state.selected.has(x.source));
+ if(!selected.length)return;
+ const invalid=selected.find(x=>!categoryFor(x.source));
+ if(invalid)return setNotice('publishStatus','Pilih kategori Store untuk: '+invalid.name+'.','warn');
+ const badPrice=selected.find(x=>x.price<=0);
+ if(badPrice)return setNotice('publishStatus','Harga jual kosong/tidak valid untuk: '+badPrice.name+'. Perbaiki harga di Business dahulu.','warn');
+ if(!confirm('Sinkronkan '+selected.length+' produk terpilih ke Store? Harga dan stok pada produk yang sudah terhubung akan diperbarui. Foto dan promo Store tetap dipertahankan.'))return;
+ state.busy=true;updatePublishButton();let success=0;const failures=[];
+ try{
+  for(const x of selected){
+   const existing=state.existing.get(x.source);
+   const base={name:x.name,price:x.price,stock:x.stock,category_id:categoryFor(x.source),active:true,product_status:x.status,business_sync_at:new Date().toISOString()};
+   let result;
+   if(existing){
+    result=await getClient().from('products').update(base).eq('id',existing.id);
+   }else{
+    result=await getClient().from('products').insert({...base,business_source_id:x.source,image_url:x.image,old_price:null,flash_sale:false,promo_start:null,promo_end:null});
+   }
+   if(result.error){failures.push(x.name+': '+result.error.message);continue;}
+   success++;
+  }
+  await loadStoreData();
+  if(failures.length)setNotice('publishStatus','Selesai sebagian: '+success+' berhasil, '+failures.length+' gagal. '+failures.slice(0,3).join(' | '),'warn');
+  else setNotice('publishStatus','Berhasil sinkron '+success+' produk. Buka Store atau tunggu refresh katalog.','good');
+ }catch(e){setNotice('publishStatus','Sinkron gagal: '+e.message,'bad');}
+ finally{state.busy=false;updatePublishButton();}
+}
+$('loginBtn').addEventListener('click',login);
+$('logoutBtn').addEventListener('click',logout);
+$('localBtn').addEventListener('click',useLocal);
+$('cloudBtn').addEventListener('click',useCloud);
+$('publishBtn').addEventListener('click',publish);
+$('selectReadyBtn').addEventListener('click',selectReady);
+$('clearBtn').addEventListener('click',clearSelect);
+$('search').addEventListener('input',renderItems);
+init();
+})();
+</script>
+</body>
+</html>
