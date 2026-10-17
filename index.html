@@ -1043,9 +1043,9 @@ function saveCatEditor(){
         if(error)throw new Error('Gagal memperbarui stok habis '+meta.name+': '+error.message);
       }
       localStorage.setItem(STORE_PUBLISHED_KEY,JSON.stringify(published));
-      setStatus('Sinkron Store berhasil: '+done+' produk diproses. Stok produk yang sebelumnya terbit dan kini habis juga diperbarui. Data modal/laba/pengeluaran/utang tidak dikirim.',true);
+      const successMessage='Sinkron Store berhasil: '+done+' produk diproses. Stok produk yang sebelumnya terbit dan kini habis juga diperbarui. Data modal/laba/pengeluaran/utang tidak dikirim.';setStatus(successMessage,true);alert(successMessage);
       window.v2RenderStoreSyncList();
-    }catch(e){setStatus('Sinkron Store gagal: '+(e&&e.message?e.message:String(e)));}
+    }catch(e){const errorMessage='Sinkron Store gagal: '+(e&&e.message?e.message:String(e));setStatus(errorMessage);alert(errorMessage+'\n\nKirim teks pesan ini ke ChatGPT agar bisa diperbaiki.');}
   };
   window.v2RenderStoreSyncList();
 
