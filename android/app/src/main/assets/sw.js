@@ -1,4 +1,4 @@
-const CACHE_NAME = "mr-all-business-v2";
+const CACHE_NAME = "mr-all-business-v3";
 const APP_FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
