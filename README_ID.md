@@ -74,3 +74,8 @@ Ini sengaja manual di V2 agar satu perangkat tidak diam-diam menimpa perangkat l
 ## Integrasi WD Business → MR ALL IN Personal
 
 Pada menu **Gaji / WD Pemilik**, masukkan Project URL dan publishable/anon key dari proyek Supabase Personal, lalu login dengan akun Personal dan pilih rekening penerima. Password tidak disimpan oleh modul. WD baru mengurangi cash Business dan mencoba membuat pemasukan Personal dengan `source_transfer_id` unik; status pending dapat dicoba ulang tanpa membuat transaksi ganda. Jangan gunakan service-role key. Pastikan migration `001_personal_mvp.sql` pada repository `personal` sudah dijalankan di Supabase Personal. Transaksi WD lama tidak dipindahkan otomatis.
+
+
+### Sinkron stok otomatis dari POS
+
+Setelah produk dipublikasikan ke Store dan sesi admin Store masih aktif pada perangkat yang sama, transaksi POS atau penandaan SOLD memicu sinkronisasi latar belakang untuk produk yang sudah dipublikasikan. Sinkron manual tetap tersedia untuk menerbitkan produk baru yang dipilih. Kegagalan otomatis dicatat di console/status, tidak membatalkan transaksi POS lokal. Uji stok pada Store setelah transaksi pertama.
