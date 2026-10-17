@@ -58,3 +58,14 @@ Ini sengaja manual di V2 agar satu perangkat tidak diam-diam menimpa perangkat l
 - QR/thermal printer dan PDF printing bergantung browser/device/printer; di APK ada bridge cetak yang perlu diuji pada perangkat nyata.
 - Beberapa data sejarah di sumber lama punya transaksi dengan harga/modal yang perlu audit; jangan menganggap laporan historis sempurna hanya karena dapat ditampilkan.
 - Saldo dan stok awal perlu dicocokkan sekali dengan uang/barang fisik sebelum dipakai sebagai buku utama.
+
+## Integrasi stok MR ALL IN Business → MR ALL IN Store (uji awal)
+
+- Pada menu **Cloud / Sinkron Online**, gunakan URL dan publishable key dari project Supabase Store: `https://sjwmeoqctebgilpvfzmd.supabase.co`.
+- Login menggunakan akun admin Store `raflicit29@gmail.com`.
+- Di bagian **Sinkron stok ke MR ALL IN Store**, pilih hanya produk Ready yang ingin ditampilkan lalu tekan **Sinkronkan ke Store**.
+- Data yang dipublikasikan hanya nama produk, kategori, harga jual, stok, status, dan URL gambar HTTP(S) jika tersedia. Modal, harga beli, laba, pengeluaran, utang, dan data pribadi tidak dikirim.
+- Produk yang sudah dipublikasikan akan ikut diperbarui saat sinkron berikutnya. Jika stok Ready-nya habis, produk tersebut akan diperbarui menjadi stok 0 / TERJUAL.
+- Sinkronisasi ini masih **manual melalui tombol**, bukan realtime otomatis. Setelah perubahan stok di POS, jalankan sinkronisasi untuk memperbarui Store.
+- Fitur memakai tabel `categories` dan `products` yang sudah dipakai Store; tidak membutuhkan migration tambahan. RLS dan izin akun admin harus mengizinkan operasi yang sama seperti halaman admin Store.
+- Uji satu produk terlebih dahulu dan periksa hasilnya di Store sebelum memilih produk lain. APK Android yang sudah terpasang tidak berubah otomatis; build APK baru diperlukan untuk memasukkan kode ini ke paket Android. PWA di hosting akan mengambil kode terbaru setelah pembaruan cache/refresh.
