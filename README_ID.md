@@ -69,3 +69,8 @@ Ini sengaja manual di V2 agar satu perangkat tidak diam-diam menimpa perangkat l
 - Sinkronisasi ini masih **manual melalui tombol**, bukan realtime otomatis. Setelah perubahan stok di POS, jalankan sinkronisasi untuk memperbarui Store.
 - Fitur memakai tabel `categories` dan `products` yang sudah dipakai Store; tidak membutuhkan migration tambahan. RLS dan izin akun admin harus mengizinkan operasi yang sama seperti halaman admin Store.
 - Uji satu produk terlebih dahulu dan periksa hasilnya di Store sebelum memilih produk lain. APK Android yang sudah terpasang tidak berubah otomatis; build APK baru diperlukan untuk memasukkan kode ini ke paket Android. PWA di hosting akan mengambil kode terbaru setelah pembaruan cache/refresh.
+
+
+## Integrasi WD Business → MR ALL IN Personal
+
+Pada menu **Gaji / WD Pemilik**, masukkan Project URL dan publishable/anon key dari proyek Supabase Personal, lalu login dengan akun Personal dan pilih rekening penerima. Password tidak disimpan oleh modul. WD baru mengurangi cash Business dan mencoba membuat pemasukan Personal dengan `source_transfer_id` unik; status pending dapat dicoba ulang tanpa membuat transaksi ganda. Jangan gunakan service-role key. Pastikan migration `001_personal_mvp.sql` pada repository `personal` sudah dijalankan di Supabase Personal. Transaksi WD lama tidak dipindahkan otomatis.
