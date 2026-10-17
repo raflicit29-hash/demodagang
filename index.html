@@ -974,11 +974,12 @@ function saveCatEditor(){
   function storeEsc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
   window.v2RenderStoreSyncList=()=>{
     const root=$2('v2StoreSyncList');if(!root)return;
-    const groups=getGroups(),selected=storeSelected();
+    const groups=getGroups(),selected=storeSelected(),published=storePublished();
     if(!groups.length){root.innerHTML='<div class="small">Belum ada stok Ready untuk dipublikasikan.</div>';return;}
-    root.innerHTML=groups.map((g,i)=>'<label style="display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #343b46;border-radius:10px;margin:6px 0"><input type="checkbox" data-store-index="'+i+'" '+(selected.has(storeKey(g))?'checked':'')+' style="margin-top:4px"><span style="flex:1"><b>'+storeEsc(storeProductName(g))+'</b><br><small>'+storeEsc(g.cat||'Hardware')+' • Stok '+g.indices.length+' unit • Harga jual '+(storeSellPrice(g)?rp2(storeSellPrice(g)):'BELUM DIISI')+'</small></span></label>').join('');
+    root.innerHTML=groups.map((g,i)=>'<label style="display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #343b46;border-radius:10px;margin:6px 0"><input type="checkbox" data-store-index="'+i+'" '+((selected.has(storeKey(g))||published[storeKey(g)])?'checked':'')+' style="margin-top:4px"><span style="flex:1"><b>'+storeEsc(storeProductName(g))+'</b><br><small>'+storeEsc(g.cat||'Hardware')+' • Stok '+g.indices.length+' unit • Harga jual '+(storeSellPrice(g)?rp2(storeSellPrice(g)):'BELUM DIISI')+'</small></span></label>').join('');
     root.querySelectorAll('input[data-store-index]').forEach(el=>el.addEventListener('change',()=>{
       const current=storeSelected(),g=getGroups()[Number(el.dataset.storeIndex)];if(!g)return;
+      if(!el.checked&&storePublished()[storeKey(g)]){el.checked=true;alert('Produk yang sudah dipublikasikan tetap disinkronkan. Penarikan produk dari Store belum tersedia di versi ini.');return;}
       if(el.checked)current.add(storeKey(g));else current.delete(storeKey(g));
       localStorage.setItem(STORE_SELECTED_KEY,JSON.stringify([...current]));
     }));
