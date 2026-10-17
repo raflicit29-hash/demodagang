@@ -952,6 +952,9 @@ function saveCatEditor(){
   const STORE_SELECTED_KEY='mrall_business_store_selected_v1';
   const STORE_PUBLISHED_KEY='mrall_business_store_published_v1';
   const STORE_PROJECT_URL='https://sjwmeoqctebgilpvfzmd.supabase.co';
+  const STORE_SUPABASE_KEY='sb_publishable_0r10zRJ4HOI9bfOFZJeliw_QIqN-q4T';
+  let storeSyncClient=null;
+  function storeClient(){if(!window.supabase||!window.supabase.createClient)throw new Error('Library Supabase belum termuat. Refresh saat internet aktif.');if(!storeSyncClient)storeSyncClient=window.supabase.createClient(STORE_PROJECT_URL,STORE_SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'mr-all-store-sync-auth-v1'}});return storeSyncClient;}
   function storeSelected(){try{const v=JSON.parse(localStorage.getItem(STORE_SELECTED_KEY)||'[]');return new Set(Array.isArray(v)?v:[])}catch(e){return new Set()}}
   function storePublished(){try{const v=JSON.parse(localStorage.getItem(STORE_PUBLISHED_KEY)||'{}');return v&&typeof v==='object'?v:{}}catch(e){return {}}}
   function storeKey(g){return g.key}
@@ -998,9 +1001,11 @@ function saveCatEditor(){
     if(chosen.some(g=>!storeSellPrice(g))){alert('Ada produk terpilih yang belum memiliki harga jual. Isi harga jual di stok Business terlebih dahulu.');return;}
     if(!confirm('Sinkronkan '+chosen.length+' produk terpilih/terbit ke MR ALL IN Store? Hanya nama, kategori, harga jual, foto (jika ada), status, dan stok yang dikirim.'))return;
     try{
-      const conf=cfg(),url=String(conf.url||'').replace(/\/$/,'');
-      if(url!==STORE_PROJECT_URL)throw new Error('Project Supabase pada Cloud harus diarahkan ke project MR ALL IN Store ('+STORE_PROJECT_URL+'). Simpan konfigurasi yang benar lalu login kembali.');
-      const {c,user}=await requireUser();
+      const c=storeClient();
+      const {data:sessionData,error:sessionError}=await c.auth.getSession();if(sessionError)throw sessionError;
+      let user=sessionData.session&&sessionData.session.user?sessionData.session.user:null;
+      if(user&&String(user.email||'').toLowerCase()!=='raflicit29@gmail.com'){await c.auth.signOut();user=null;}
+      if(!user){const email=$2('v2CloudEmail').value.trim().toLowerCase(),password=$2('v2CloudPassword').value;if(email!=='raflicit29@gmail.com')throw new Error('Masukkan email admin Store raflicit29@gmail.com pada bagian Cloud.');if(!password)throw new Error('Masukkan password akun admin Store pada bagian Cloud, lalu coba sinkron lagi.');const {data,error}=await c.auth.signInWithPassword({email,password});if(error)throw error;user=data.user;}
       if(String(user.email||'').toLowerCase()!=='raflicit29@gmail.com')throw new Error('Login dengan akun admin Store raflicit29@gmail.com terlebih dahulu.');
       setStatus('Memeriksa kategori dan produk Store…');
       const {data:catRows,error:catErr}=await c.from('categories').select('id,name,active,sort_order');
