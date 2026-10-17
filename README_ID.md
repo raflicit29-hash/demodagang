@@ -61,8 +61,8 @@ Ini sengaja manual di V2 agar satu perangkat tidak diam-diam menimpa perangkat l
 
 ## Integrasi stok MR ALL IN Business → MR ALL IN Store (uji awal)
 
-- Pada menu **Cloud / Sinkron Online**, gunakan URL dan publishable key dari project Supabase Store: `https://sjwmeoqctebgilpvfzmd.supabase.co`.
-- Login menggunakan akun admin Store `raflicit29@gmail.com`.
+- Pada menu **Cloud / Sinkron Online**, isi email admin Store `raflicit29@gmail.com` dan password akun tersebut. Tombol sinkron memakai client Supabase Store terpisah, sehingga konfigurasi cloud snapshot Business yang sudah ada tidak perlu diganti.
+- Sinkron Store hanya menerima akun admin Store yang ditentukan; autentikasinya terpisah dari sesi cloud snapshot Business.
 - Di bagian **Sinkron stok ke MR ALL IN Store**, pilih hanya produk Ready yang ingin ditampilkan lalu tekan **Sinkronkan ke Store**.
 - Data yang dipublikasikan hanya nama produk, kategori, harga jual, stok, status, dan URL gambar HTTP(S) jika tersedia. Modal, harga beli, laba, pengeluaran, utang, dan data pribadi tidak dikirim.
 - Produk yang sudah dipublikasikan akan ikut diperbarui saat sinkron berikutnya. Jika stok Ready-nya habis, produk tersebut akan diperbarui menjadi stok 0 / TERJUAL.
