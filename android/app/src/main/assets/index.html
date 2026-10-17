@@ -1009,8 +1009,8 @@ function saveCatEditor(){
     const selected=storeSelected(),groups=getGroups(),published=storePublished();
     const currentByKey=new Map(groups.map(g=>[storeKey(g),g]));
     const chosen=groups.filter(g=>selected.has(storeKey(g))||published[storeKey(g)]);
-    if(!chosen.length&&!Object.keys(published).some(k=>!currentByKey.has(k))){alert('Pilih minimal satu produk Ready terlebih dahulu.');return;}
-    if(chosen.some(g=>!storeSellPrice(g))){alert('Ada produk terpilih yang belum memiliki harga jual. Isi harga jual di stok Business terlebih dahulu.');return;}
+    if(!chosen.length&&!Object.keys(published).some(k=>!currentByKey.has(k))){if(!auto)alert('Pilih minimal satu produk Ready terlebih dahulu.');return;}
+    if(chosen.some(g=>!storeSellPrice(g))){if(!auto)alert('Ada produk terpilih yang belum memiliki harga jual. Isi harga jual di stok Business terlebih dahulu.');else setStatus('Sinkron otomatis dilewati: ada produk terpilih tanpa harga jual. Isi harga jual lalu sinkron manual.');return;}
     if(!auto&&!confirm('Sinkronkan '+chosen.length+' produk terpilih/terbit ke MR ALL IN Store? Hanya nama, kategori, harga jual, foto (jika ada), status, dan stok yang dikirim.'))return;
     try{
       const c=storeClient();
