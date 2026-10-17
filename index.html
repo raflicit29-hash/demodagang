@@ -900,7 +900,7 @@ function saveCatEditor(){
   addPage('cloudsync','☁️ Sinkron Online',`
     <div class="v7-note">Sinkronisasi cloud manual dan aman: upload mengirim salinan lokal ke akun sendiri; download mengganti data perangkat ini setelah konfirmasi. Sebelum mulai, jalankan SQL yang ada di folder <b>supabase/migrations</b>. Jangan gunakan service-role key; gunakan publishable/anon key.</div>
     <div class="card"><div class="v7-formgrid"><div style="grid-column:1/-1"><label>Supabase Project URL</label><input id="v2SupabaseUrl" placeholder="https://xxxx.supabase.co" autocomplete="url"></div><div style="grid-column:1/-1"><label>Publishable / anon key</label><input id="v2SupabaseKey" placeholder="sb_publishable_... atau anon public key" autocomplete="off"></div><div><label>Email akun</label><input id="v2CloudEmail" type="email" autocomplete="username"></div><div><label>Password</label><input id="v2CloudPassword" type="password" autocomplete="current-password"></div></div><div class="actions"><button class="btn ghost" onclick="v2CloudSaveConfig()">Simpan Konfigurasi</button><button class="btn primary" onclick="v2CloudSignUp()">Daftar Akun</button><button class="btn primary" onclick="v2CloudSignIn()">Masuk</button><button class="btn ghost" onclick="v2CloudSignOut()">Keluar</button></div><div id="v2CloudStatus" class="alert" style="margin-top:9px">Cloud belum tersambung.</div></div>
-    <div class="card"><div class="section">Aksi sinkron</div><div class="actions"><button class="btn primary" onclick="v2CloudUpload()">⬆ Upload data lokal ke cloud</button><button class="btn ghost" onclick="v2CloudDownload()">⬇ Download cloud ke perangkat ini</button></div><div class="small">Ini versi sinkron snapshot manual, bukan live realtime. Setiap tombol upload/download minta konfirmasi supaya data di perangkat lain tidak tertimpa diam-diam.</div></div>`);
+    <div class="card"><div class="section">Aksi sinkron</div><div class="actions"><button class="btn primary" onclick="v2CloudUpload()">⬆ Upload data lokal ke cloud</button><button class="btn ghost" onclick="v2CloudDownload()">⬇ Download cloud ke perangkat ini</button></div><div class="small">Ini versi sinkron snapshot manual, bukan live realtime. Setiap tombol upload/download minta konfirmasi supaya data di perangkat lain tidak tertimpa diam-diam.</div></div><div class="card"><div class="section">📦 Sinkron stok ke MR ALL IN Store</div><div class="small">Pilih produk Ready yang ingin dipublikasikan. Modal, laba, pengeluaran, utang, dan data pribadi tidak dikirim. Produk yang sudah pernah dipublikasikan akan ikut diperbarui stoknya setiap sinkron.</div><div id="v2StoreSyncList" class="v7-list" style="margin-top:10px"></div><div class="actions"><button class="btn ghost" onclick="v2StoreSyncSelectAll(true)">Pilih semua stok siap</button><button class="btn ghost" onclick="v2StoreSyncSelectAll(false)">Kosongkan pilihan</button><button class="btn primary" onclick="v2StoreSync()">☁️ Sinkronkan ke Store</button></div></div></div>`);
   // Add visible navigation links to the legacy dynamic menu.
   const nav=document.querySelector('nav');
   const navs=[['v2pos','🧾<br>Kasir'],['ownerdraw','💼<br>WD Owner'],['v2closing','🌙<br>Tutup Hari'],['cloudsync','☁️<br>Cloud']];
@@ -947,6 +947,102 @@ function saveCatEditor(){
   if($2('v2PosDate'))$2('v2PosDate').value=localDate();if($2('v2OwnerDate'))$2('v2OwnerDate').value=localDate();if($2('v2CloseDate'))$2('v2CloseDate').value=localDate();
   const oldRender=window.render;window.render=function(){oldRender.apply(this,arguments);try{window.v2RenderModuleData();const q=$2('v2PosProduct');if(q&&!q.options.length)window.v2POSRefresh();}catch(e){console.warn('V2 render module',e);}};
   window.v2POSRefresh();window.v2RenderModuleData();
+
+  // MR ALL IN Business -> Store: publish only selected catalog groups and never financial fields.
+  const STORE_SELECTED_KEY='mrall_business_store_selected_v1';
+  const STORE_PUBLISHED_KEY='mrall_business_store_published_v1';
+  const STORE_PROJECT_URL='https://sjwmeoqctebgilpvfzmd.supabase.co';
+  function storeSelected(){try{const v=JSON.parse(localStorage.getItem(STORE_SELECTED_KEY)||'[]');return new Set(Array.isArray(v)?v:[])}catch(e){return new Set()}}
+  function storePublished(){try{const v=JSON.parse(localStorage.getItem(STORE_PUBLISHED_KEY)||'{}');return v&&typeof v==='object'?v:{}}catch(e){return {}}}
+  function storeKey(g){return g.key}
+  function storeUuid(input){
+    let a=2166136261,b=2246822519,c=3266489917,d=668265263;
+    for(let i=0;i<input.length;i++){const n=input.charCodeAt(i);a=Math.imul(a^n,16777619);b=Math.imul(b^n,2246822519);c=Math.imul(c^n,3266489917);d=Math.imul(d^n,668265263);}
+    let h=[a,b,c,d].map(n=>(n>>>0).toString(16).padStart(8,'0')).join('');
+    h=h.slice(0,12)+'5'+h.slice(13,16)+'a'+h.slice(17);
+    return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20,32);
+  }
+  function storeProductName(g){
+    const parts=[g.model,g.cap,g.brand].map(x=>String(x||'').trim()).filter(Boolean);
+    if(/hdd|ssd|hard.?disk/i.test(String(g.model||'')+' '+String(g.cat||''))&&g.health)parts.push('Health '+g.health);
+    return parts.join(' ').slice(0,180)||'Produk MR ALL IN';
+  }
+  function storeSellPrice(g){
+    const prices=g.indices.map(i=>Number(db.cat[i].sell)||0).filter(n=>n>0).sort((a,b)=>a-b);
+    return prices.length?prices[Math.floor(prices.length/2)]:0;
+  }
+  function storeEsc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+  window.v2RenderStoreSyncList=()=>{
+    const root=$2('v2StoreSyncList');if(!root)return;
+    const groups=getGroups(),selected=storeSelected();
+    if(!groups.length){root.innerHTML='<div class="small">Belum ada stok Ready untuk dipublikasikan.</div>';return;}
+    root.innerHTML=groups.map((g,i)=>'<label style="display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #343b46;border-radius:10px;margin:6px 0"><input type="checkbox" data-store-index="'+i+'" '+(selected.has(storeKey(g))?'checked':'')+' style="margin-top:4px"><span style="flex:1"><b>'+storeEsc(storeProductName(g))+'</b><br><small>'+storeEsc(g.cat||'Hardware')+' • Stok '+g.indices.length+' unit • Harga jual '+(storeSellPrice(g)?rp2(storeSellPrice(g)):'BELUM DIISI')+'</small></span></label>').join('');
+    root.querySelectorAll('input[data-store-index]').forEach(el=>el.addEventListener('change',()=>{
+      const current=storeSelected(),g=getGroups()[Number(el.dataset.storeIndex)];if(!g)return;
+      if(el.checked)current.add(storeKey(g));else current.delete(storeKey(g));
+      localStorage.setItem(STORE_SELECTED_KEY,JSON.stringify([...current]));
+    }));
+  };
+  window.v2StoreSyncSelectAll=(yes)=>{
+    const groups=getGroups(),selected=storeSelected();
+    if(yes)groups.forEach(g=>selected.add(storeKey(g)));else selected.clear();
+    localStorage.setItem(STORE_SELECTED_KEY,JSON.stringify([...selected]));
+    window.v2RenderStoreSyncList();
+  };
+  window.v2StoreSync=async()=>{
+    const selected=storeSelected(),groups=getGroups(),published=storePublished();
+    const currentByKey=new Map(groups.map(g=>[storeKey(g),g]));
+    const chosen=groups.filter(g=>selected.has(storeKey(g))||published[storeKey(g)]);
+    if(!chosen.length&&!Object.keys(published).some(k=>!currentByKey.has(k))){alert('Pilih minimal satu produk Ready terlebih dahulu.');return;}
+    if(chosen.some(g=>!storeSellPrice(g))){alert('Ada produk terpilih yang belum memiliki harga jual. Isi harga jual di stok Business terlebih dahulu.');return;}
+    if(!confirm('Sinkronkan '+chosen.length+' produk terpilih/terbit ke MR ALL IN Store? Hanya nama, kategori, harga jual, foto (jika ada), status, dan stok yang dikirim.'))return;
+    try{
+      const conf=cfg(),url=String(conf.url||'').replace(/\/$/,'');
+      if(url!==STORE_PROJECT_URL)throw new Error('Project Supabase pada Cloud harus diarahkan ke project MR ALL IN Store ('+STORE_PROJECT_URL+'). Simpan konfigurasi yang benar lalu login kembali.');
+      const {c,user}=await requireUser();
+      if(String(user.email||'').toLowerCase()!=='raflicit29@gmail.com')throw new Error('Login dengan akun admin Store raflicit29@gmail.com terlebih dahulu.');
+      setStatus('Memeriksa kategori dan produk Store…');
+      const {data:catRows,error:catErr}=await c.from('categories').select('id,name,active,sort_order');
+      if(catErr)throw catErr;
+      const categories=catRows||[];
+      let nextSort=categories.reduce((m,x)=>Math.max(m,Number(x.sort_order)||0),0)+1;
+      const categoryFor=async(name)=>{
+        const label=String(name||'Hardware').trim()||'Hardware';
+        let found=categories.find(x=>String(x.name||'').trim().toLowerCase()===label.toLowerCase());
+        if(found)return found;
+        const {data,error}=await c.from('categories').insert({name:label,active:true,sort_order:nextSort++}).select('id,name,active,sort_order').single();
+        if(error)throw error;
+        categories.push(data);return data;
+      };
+      const {data:productRows,error:prodErr}=await c.from('products').select('id,name,category_id,price,stock');
+      if(prodErr)throw prodErr;
+      const products=productRows||[];
+      let done=0;
+      for(const g of chosen){
+        const key=storeKey(g),category=await categoryFor(g.cat||'Hardware'),name=storeProductName(g);
+        const mapped=published[key];
+        const same=products.find(p=>p.category_id===category.id&&String(p.name||'').trim().toLowerCase()===name.toLowerCase());
+        const id=(mapped&&mapped.id)||(same&&same.id)||storeUuid('mrall-business-store-v1|'+key);
+        const first=db.cat[g.indices[0]]||{};
+        const price=storeSellPrice(g),stock=g.indices.length;
+        const product={id,name,price,old_price:null,stock,category_id:category.id,image_url:first.image_url||first.image||null,flash_sale:false,promo_start:null,promo_end:null,active:true,product_status:stock>0?'ready':'sold'};
+        const {error}=await c.from('products').upsert(product,{onConflict:'id'});
+        if(error)throw new Error(name+': '+error.message);
+        published[key]={id,category_id:category.id,name,category:category.name};
+        done++;
+      }
+      for(const [key,meta] of Object.entries(published)){
+        if(currentByKey.has(key))continue;
+        const {error}=await c.from('products').update({stock:0,product_status:'sold'}).eq('id',meta.id);
+        if(error)throw new Error('Gagal memperbarui stok habis '+meta.name+': '+error.message);
+      }
+      localStorage.setItem(STORE_PUBLISHED_KEY,JSON.stringify(published));
+      setStatus('Sinkron Store berhasil: '+done+' produk diproses. Stok produk yang sebelumnya terbit dan kini habis juga diperbarui. Data modal/laba/pengeluaran/utang tidak dikirim.',true);
+      window.v2RenderStoreSyncList();
+    }catch(e){setStatus('Sinkron Store gagal: '+(e&&e.message?e.message:String(e)));}
+  };
+  window.v2RenderStoreSyncList();
+
 })();
 </script>
 </body></html>
