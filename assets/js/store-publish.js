@@ -5,7 +5,9 @@
   'use strict';
   var ADMIN_EMAIL='raflicit29@gmail.com';
   var DB_KEY='mrall_business_cutover_20261014_v2';
+  var SELECTION_KEY='mrall_business_store_publish_selection_v1';
   var items=[];
+  var autoSyncTimer=null,autoSyncBusy=false;
   function byId(id){return document.getElementById(id)}
   function clean(v){return String(v==null?'':v).trim().replace(/\s+/g,' ')}
   function norm(v){return clean(v).toLowerCase()}
@@ -56,6 +58,8 @@
     return result.sort(function(a,b){return a.name.localeCompare(b.name)});
   }
   function message(text,good){var el=byId('v2StorePublishStatus');if(el){el.textContent=text;el.style.borderColor=good?'#238d60':'#6d5a36'}}
+  function saveSelectedKeys(keys){try{localStorage.setItem(SELECTION_KEY,JSON.stringify(keys))}catch(_){}}
+  function readSelectedKeys(){try{var keys=JSON.parse(localStorage.getItem(SELECTION_KEY)||'[]');return new Set(Array.isArray(keys)?keys:[])}catch(_){return new Set()}}
   function count(){var el=byId('v2StorePublishCount');if(el)el.textContent=items.filter(function(x){return!!x.selected}).length+' produk dipilih'}
   function render(){
     var root=byId('v2StorePublishList');if(!root)return;
@@ -80,17 +84,47 @@
     try{
       var auth=await requireAdmin();if(!items.length)throw new Error('Muat daftar produk terlebih dahulu.');
       var selected=items.filter(function(x){return!!x.selected}).map(function(x){return{owner_id:auth.user.id,source_key:x.source_key,match_key:x.match_key,name:x.name,price:x.price,stock:x.stock,category:x.category,image_url:x.image_url,product_status:x.product_status,published:true,updated_at:new Date().toISOString()}});
-      if(!window.confirm('Publikasikan '+selected.length+' grup produk ke Store? Yang dikirim hanya nama, kategori, harga jual, stok, dan status. Modal, supplier, profit, utang, kas, konsumen, dan snapshot tidak dikirim. Produk yang tidak dicentang akan dihapus dari katalog sinkron. Lanjutkan?'))return;
+      if(selected.length===0&&!window.confirm('Tidak ada produk dipilih. Ini akan menghapus SEMUA produk yang sebelumnya diterbitkan dari Business ke Store. Produk toko manual tidak akan dihapus. Yakin melanjutkan?'))return;
+      if(selected.length>0&&!window.confirm('Publikasikan '+selected.length+' grup produk ke Store? Yang dikirim hanya nama, kategori, harga jual, stok, dan status. Modal, supplier, profit, utang, kas, konsumen, dan snapshot tidak dikirim. Produk yang tidak dicentang akan dihapus dari katalog sinkron. Lanjutkan?'))return;
       message('Memperbarui katalog Store…',false);
       for(var i=0;i<selected.length;i+=100){var up=await auth.client.from('mrall_store_inventory').upsert(selected.slice(i,i+100),{onConflict:'owner_id,source_key'});if(up.error)throw up.error}
       var q=await auth.client.from('mrall_store_inventory').select('source_key').eq('owner_id',auth.user.id);if(q.error)throw q.error;
       var keep=new Set(selected.map(function(x){return x.source_key})),stale=(q.data||[]).filter(function(x){return!keep.has(x.source_key)});
       for(var j=0;j<stale.length;j++){var del=await auth.client.from('mrall_store_inventory').delete().eq('owner_id',auth.user.id).eq('source_key',stale[j].source_key);if(del.error)throw del.error}
-      message('Berhasil menerbitkan '+selected.length+' grup produk. Refresh Store untuk melihat hasil.',true);
+      saveSelectedKeys(selected.map(function(x){return x.source_key}));
+      message('Berhasil menerbitkan '+selected.length+' grup produk. Perubahan stok berikutnya akan disinkronkan otomatis dari perangkat ini saat data disimpan.',true);
       await window.v2StoreLoadPublishList();
     }catch(e){message('Sinkron gagal: '+(e&&e.message?e.message:String(e))+'. Data Business lokal tetap aman.',false)}
     finally{if(button)button.disabled=false}
   };
+
+  // Debounced automatic stock refresh for already-published product keys only.
+  // Network errors never block or roll back the local Business save.
+  window.v2StoreAutoSync=async function(){
+    if(autoSyncBusy)return;
+    var keys=readSelectedKeys();
+    if(!keys.size)return;
+    autoSyncBusy=true;
+    try{
+      var auth=await requireAdmin();
+      var db=readDb();
+      var selected=makeItems(db,keys).filter(function(item){return keys.has(item.source_key)});
+      if(!selected.length){message('Auto-sync ditunda: produk publik tidak ditemukan pada data lokal. Buka Muat daftar stok dan sinkronkan ulang untuk merapikan katalog.',false);return}
+      var rows=selected.map(function(x){return{owner_id:auth.user.id,source_key:x.source_key,match_key:x.match_key,name:x.name,price:x.price,stock:x.stock,category:x.category,image_url:x.image_url,product_status:x.product_status,published:true,updated_at:new Date().toISOString()}});
+      for(var i=0;i<rows.length;i+=100){
+        var up=await auth.client.from('mrall_store_inventory').upsert(rows.slice(i,i+100),{onConflict:'owner_id,source_key'});
+        if(up.error)throw up.error;
+      }
+      message('Auto-sync stok berhasil • '+new Date().toLocaleTimeString('id-ID')+'. Halaman Store memperbarui stok maksimal sekitar 30 detik.',true);
+    }catch(e){
+      message('Auto-sync belum berhasil: '+(e&&e.message?e.message:String(e))+'. Data lokal Business tetap tersimpan; coba sinkron manual saat online.',false);
+    }finally{autoSyncBusy=false}
+  };
+  window.v2StoreAutoScheduleSync=function(){
+    if(autoSyncTimer)clearTimeout(autoSyncTimer);
+    autoSyncTimer=setTimeout(function(){window.v2StoreAutoSync()},1800);
+  };
+
   function install(){
     var page=byId('cloudsync');if(!page||byId('v2StorePublishPanel'))return;
     var panel=document.createElement('div');panel.className='card';panel.id='v2StorePublishPanel';
