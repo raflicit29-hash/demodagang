@@ -132,6 +132,7 @@
     page.appendChild(panel);
     byId('v2StoreLoadButton').addEventListener('click',window.v2StoreLoadPublishList);
     byId('v2StorePublishButton').addEventListener('click',window.v2StoreSyncPublish);
+    window.v2StoreAutoScheduleSync();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
