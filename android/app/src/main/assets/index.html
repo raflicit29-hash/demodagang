@@ -383,7 +383,7 @@ db.cat.forEach(x=>{if(x.status==='SOLD'&&!x.channel)x.channel='OFFLINE/COD';if(x
 const rp=n=>'Rp'+Math.round(n||0).toLocaleString('id-ID');
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function save(){localStorage.setItem(KEY,JSON.stringify(db));render();}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render();if(typeof window.v2StoreAutoScheduleSync==='function')window.v2StoreAutoScheduleSync();}
 function show(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));let b=btn||[...document.querySelectorAll('nav button')].find(x=>x.dataset.page===id)||(id==='insight'||id==='stock'||id==='bak'||id==='gar'||id==='pri'||id==='target'||id==='fixed'||id==='exp'||id==='bank'?document.querySelector('nav button[data-page=finhub]'):null);if(b)b.classList.add('active');render();window.scrollTo({top:0,behavior:'smooth'});} function go(id){show(id);}
 function sellCat(i){
   const x=db.cat[i];
@@ -917,6 +917,7 @@ function saveCatEditor(){
   async function requireUser(){const c=cloudClient();const {data,error}=await c.auth.getUser();if(error)throw error;if(!data.user)throw new Error('Masuk ke akun cloud terlebih dahulu.');cloudUser=data.user;return {c,user:data.user};}
   window.v2CloudUpload=async()=>{try{const {c,user}=await requireUser();if(!confirm('Upload akan MENGGANTI snapshot cloud akun ini dengan data di perangkat sekarang. Pastikan data lokal yang benar. Lanjut?'))return;const payload=JSON.parse(JSON.stringify(db));const {error}=await c.from('mrall_business_snapshots').upsert({user_id:user.id,data:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;setStatus('Upload berhasil: '+new Date().toLocaleString('id-ID')+'. Gunakan Download di perangkat lain.',true);}catch(e){setStatus('Upload gagal: '+e.message+' Pastikan SQL migration dan RLS sudah dipasang.');}};
   window.v2CloudDownload=async()=>{try{const {c,user}=await requireUser();const {data,error}=await c.from('mrall_business_snapshots').select('data,updated_at').eq('user_id',user.id).maybeSingle();if(error)throw error;if(!data||!data.data)throw new Error('Belum ada snapshot cloud untuk akun ini. Upload dari perangkat yang datanya benar terlebih dahulu.');if(!confirm('Download snapshot cloud '+new Date(data.updated_at).toLocaleString('id-ID')+' akan MENGGANTI data lokal perangkat ini. Download backup lokal dulu. Lanjut?'))return;const incoming=data.data;if(!Array.isArray(incoming.cat)||!Array.isArray(incoming.gar)||!Array.isArray(incoming.wd))throw new Error('Format snapshot tidak valid.');db=JSON.parse(JSON.stringify(incoming));if(!Array.isArray(db.sales))db.sales=[];if(!Array.isArray(db.dailyClosings))db.dailyClosings=[];if(!Array.isArray(db.auditEvents))db.auditEvents=[];save();setStatus('Download berhasil. Data lokal sudah diganti dengan snapshot cloud dari '+new Date(data.updated_at).toLocaleString('id-ID')+'.',true);}catch(e){setStatus('Download gagal: '+e.message);}};
+  window.v2StorePublishAuth=async()=>{const {c,user}=await requireUser();return {client:c,user:{id:user.id,email:user.email}};};
   const c=cfg();if($2('v2SupabaseUrl'))$2('v2SupabaseUrl').value=c.url||'';if($2('v2SupabaseKey'))$2('v2SupabaseKey').value=c.key||'';
   // POS group key groups same model/capacity/category while selling older stock rows first (FIFO).
   function norm(s){return String(s||'').trim().toLowerCase().replace(/\s+/g,' ')}
@@ -949,4 +950,5 @@ function saveCatEditor(){
   window.v2POSRefresh();window.v2RenderModuleData();
 })();
 </script>
+<script src="assets/js/store-publish.js"></script>
 </body></html>

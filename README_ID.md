@@ -58,3 +58,7 @@ Ini sengaja manual di V2 agar satu perangkat tidak diam-diam menimpa perangkat l
 - QR/thermal printer dan PDF printing bergantung browser/device/printer; di APK ada bridge cetak yang perlu diuji pada perangkat nyata.
 - Beberapa data sejarah di sumber lama punya transaksi dengan harga/modal yang perlu audit; jangan menganggap laporan historis sempurna hanya karena dapat ditampilkan.
 - Saldo dan stok awal perlu dicocokkan sekali dengan uang/barang fisik sebelum dipakai sebagai buku utama.
+
+
+## Sinkron katalog publik MR ALL IN Store
+Fitur ini menambahkan jembatan katalog terpisah dan tidak mengubah format snapshot Business. Jalankan `supabase/migrations/002_business_inventory_sync.sql` satu kali di project Supabase yang sama. Di aplikasi Business, buka Cloud → Publikasikan stok ke MR ALL IN Store, masuk memakai akun admin Store, pilih barang yang boleh dipublikasikan, lalu sinkronkan sekali. Setelah publikasi awal, perubahan harga/stok di perangkat Business yang sama akan dikirim otomatis setelah data disimpan; Store yang terbuka memperbarui katalog sekitar setiap 30 detik. Barang baru/varian baru tetap perlu dipilih dan dipublikasikan manual. Yang dikirim hanya nama, kategori, harga jual, stok, dan status; data modal, supplier, profit, saldo, utang, dan snapshot internal tidak dikirim.
