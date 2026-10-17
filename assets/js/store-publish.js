@@ -30,7 +30,7 @@
       if(!row||!allowed[row.status]||!clean(row.model))return;
       var stableFields=[row.model,row.cap,row.brand,row.healthReturn||row.health,row.cat];
       var key=sourceKey('cat',stableFields);
-      if(!map.has(key))map.set(key,{source_key:key,match_key:norm([row.brand,row.model,row.cap,row.healthReturn||row.health].map(clean).filter(Boolean).join(' ')),name:[row.brand,row.model,row.cap,row.healthReturn||row.health].map(clean).filter(Boolean).join(' '),price:0,category:clean(row.cat)||'Hardware',stock:0,latestDate:''});
+      if(!map.has(key))map.set(key,{source_key:key,match_key:norm([row.brand,row.model,row.cap].map(clean).filter(Boolean).join(' ')),name:[row.brand,row.model,row.cap,row.healthReturn||row.health].map(clean).filter(Boolean).join(' '),price:0,category:clean(row.cat)||'Hardware',stock:0,latestDate:''});
       var g=map.get(key);
       if(row.status==='Ready'||row.status==='STOK RETUR')g.stock++;
       if(row.status==='Ready'||row.status==='STOK RETUR'){
@@ -51,7 +51,7 @@
       var price=available.length?Math.floor(Number(available[available.length-1].sellPer)||0):Math.floor(Number(row.defaultSell)||0);
       var key=sourceKey('bulk',[row.id||row.model,row.cap,row.cat]);
       if((stock<1&&!existingKeys.has(key))||price<1)return;
-      result.push({source_key:key,match_key:norm([row.brand,row.model,row.cap,row.health||row.healthReturn].map(clean).filter(Boolean).join(' ')),name:[row.brand,row.model,row.cap,row.health||row.healthReturn].map(clean).filter(Boolean).join(' '),price:price,stock:stock,category:clean(row.cat)||'Hardware',image_url:null,product_status:stock>0?'ready':'sold',published:true});
+      result.push({source_key:key,match_key:norm([row.brand,row.model,row.cap].map(clean).filter(Boolean).join(' ')),name:[row.brand,row.model,row.cap,row.health||row.healthReturn].map(clean).filter(Boolean).join(' '),price:price,stock:stock,category:clean(row.cat)||'Hardware',image_url:null,product_status:stock>0?'ready':'sold',published:true});
     });
     return result.sort(function(a,b){return a.name.localeCompare(b.name)});
   }
