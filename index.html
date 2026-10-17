@@ -383,7 +383,7 @@ db.cat.forEach(x=>{if(x.status==='SOLD'&&!x.channel)x.channel='OFFLINE/COD';if(x
 const rp=n=>'Rp'+Math.round(n||0).toLocaleString('id-ID');
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function save(){localStorage.setItem(KEY,JSON.stringify(db));render();}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render();if(typeof window.v2StoreAutoScheduleSync==='function')window.v2StoreAutoScheduleSync();}
 function show(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));let b=btn||[...document.querySelectorAll('nav button')].find(x=>x.dataset.page===id)||(id==='insight'||id==='stock'||id==='bak'||id==='gar'||id==='pri'||id==='target'||id==='fixed'||id==='exp'||id==='bank'?document.querySelector('nav button[data-page=finhub]'):null);if(b)b.classList.add('active');render();window.scrollTo({top:0,behavior:'smooth'});} function go(id){show(id);}
 function sellCat(i){
   const x=db.cat[i];
