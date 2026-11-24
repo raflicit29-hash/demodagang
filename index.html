@@ -398,7 +398,8 @@ function sellCat(i){
   if(ch==='1')ch='OFFLINE/COD';else if(ch==='2')ch='SHOPEE';else return alert('Pilih 1 atau 2.');
   let y=x;
   if(x.status==='STOK RETUR'){
-    y={...x,date:new Date().toISOString().slice(0,10),status:'SOLD',buy:x.recoveryAmount!=null?x.recoveryAmount:x.buy,sell:s,soldAt:new Date().toISOString()};
+    y={...x,date:new Date().toISOString().slice(0,10),status:'SOLD',buy:x.recoveryAmount!=null?x.recoveryAmount:x.buy,sell:s,soldAt:new Date().toISOString(),returnOfIndex:i};
+    x.status='RETUR TERJUAL';
     db.cat.push(y);
   }else{x.sell=s;x.status='SOLD';x.soldAt=new Date().toISOString();y=x;}
   y.channel=ch;
@@ -481,28 +482,18 @@ function deleteBulk(id){let x=db.bulk.find(z=>z.id===id);if(!x)return;if(x.archi
 function renderBulk(){let box=$('bulkBody');if(!box)return;let arr=(db.bulk||[]).filter(x=>!x.archivedAt);if(!arr.length){box.innerHTML='<div class="bulk-empty">Belum ada stok bulk. Tambahkan 10 HDD/SSD sekaligus di form atas.</div>';return;}box.innerHTML=arr.slice().reverse().map(x=>{let ready=bulkReady(x),sold=bulkSold(x),modal=bulkStockModal(x),price=bulkSellPrice(x),low=x.minStock>0&&ready<=x.minStock;let img=x.image?'<img class="bulk-photo" src="'+x.image+'">':'<div class="bulk-photo"></div>';return `<div class="bulk-card ${low?'bulk-low':''}"><div class="bulk-head">${img}<div><div class="bulk-title">${esc(x.model)}</div><div class="bulk-meta">${esc(x.brand||'-')} • ${esc(x.cat||'-')} • ${esc(x.cap||'-')}</div><div class="bulk-meta">Seller: ${esc(x.seller||'-')}</div></div></div><div class="bulk-stats"><div class="bulk-stat"><b>${ready}</b><span>READY PCS</span></div><div class="bulk-stat"><b>${sold}</b><span>SOLD PCS</span></div><div class="bulk-stat"><b>${rp(modal)}</b><span>MODAL STOK</span></div></div><div class="small">Modal terbaru: <b>${rp((x.batches?.length?x.batches[x.batches.length-1].buyPer:0))}/pcs</b> • Jual: <b>${rp(price)}/pcs</b>${low?' • ⚠️ STOK MENIPIS':''}</div><div class="bulk-actions" style="margin-top:9px"><button class="btn primary" onclick="bulkSellQty('${x.id}')">JUAL</button><button class="btn" onclick="bulkSellQty('${x.id}',1)">-1</button><button class="btn" onclick="bulkSellQty('${x.id}',2)">-2</button><button class="btn ghost" onclick="bulkAddStock('${x.id}')">+ STOK</button></div><div class="actions" style="margin-top:7px"><button class="btn ghost" onclick="showBulkHistory('${x.id}')">Riwayat</button><button class="btn danger" onclick="deleteBulk('${x.id}')">Hapus</button></div></div>`}).join('');}
 function showBulkHistory(id){let x=db.bulk.find(z=>z.id===id);if(!x)return;let rows=(db.bulkSales||[]).filter(s=>s.bulkId===id);let txt=rows.length?rows.map(s=>`${s.date} • ${s.qty} pcs • ${s.channel} • Jual ${rp(s.totalSell)} • Profit ${rp(s.profit)}`).join('\n'):'Belum ada penjualan.';alert('RIWAYAT '+x.model+'\n\n'+txt);}
 function bulkMetrics(){
-  let sales=0,profit=0,pending=0,stock=0,purchases=0,shIn=0,offlineIn=0,refund=0,shPendingCount=0,shInCount=0,refundCount=0;
+  let sales=0,profit=0,pending=0,stock=0,purchases=0,shIn=0,offlineIn=0,refund=0,refundCash=0,shPendingCount=0,shInCount=0,refundCount=0;
   for(const x of db.bulk||[]){
     stock+=bulkStockModal(x);
-    for(const b of x.batches||[]) purchases+=Math.max(0,Number(b.qty)||0)*(Number(b.buyPer)||0);
+    for(const b of x.batches||[])if(!b.returnOf)purchases+=Math.max(0,Number(b.qty)||0)*(Number(b.buyPer)||0);
   }
   for(const s of db.bulkSales||[]){
     const got=s.receivedAmount!=null?s.receivedAmount:s.totalSell;
-    if(s.channel==='SHOPEE' && s.payStatus==='PENDING'){const pendingSale=Number(s.totalSell)||0;pending+=pendingSale;sales+=pendingSale;profit+=pendingSale-(Number(s.totalBuy)||0);shPendingCount++;}
-    if(s.payStatus==='MASUK' || s.channel==='OFFLINE/COD'){
-      sales+=Number(got)||0;
-      const p=(Number(got)||0)-(Number(s.totalBuy)||0);
-      profit+=p;
-      if(s.channel==='SHOPEE'){shIn+=Number(got)||0;shInCount++;}
-      else offlineIn+=Number(got)||0;
-    }
-    if(s.payStatus==='REFUND'){
-      refund+=Number(s.refundAmount)||0; refundCount++;
-      if(s.returned===false) profit-=Math.max(0,(Number(s.totalBuy)||0)-(Number(s.recoveryAmount)||0));
-      if(s.returned===true && s.recoveryAmount!=null) profit+=(Number(s.recoveryAmount)||0)-(Number(s.totalBuy)||0);
-    }
+    if(s.channel==='SHOPEE'&&s.payStatus==='PENDING'){const pendingSale=Number(s.totalSell)||0;pending+=pendingSale;sales+=pendingSale;profit+=pendingSale-(Number(s.totalBuy)||0);shPendingCount++;}
+    if(s.payStatus==='MASUK'||s.channel==='OFFLINE/COD'){sales+=Number(got)||0;profit+=(Number(got)||0)-(Number(s.totalBuy)||0);if(s.channel==='SHOPEE'){shIn+=Number(got)||0;shInCount++;}else offlineIn+=Number(got)||0;}
+    if(s.payStatus==='REFUND'){refund+=Number(s.refundAmount)||0;if(s.receivedAmount!=null)refundCash+=Math.min(Math.max(0,Number(s.receivedAmount)||0),Math.max(0,Number(s.refundAmount)||0));refundCount++;if(s.returned===false)profit-=Math.max(0,(Number(s.totalBuy)||0)-(Number(s.recoveryAmount)||0));if(s.returned===true&&s.recoveryAmount!=null)profit+=(Number(s.recoveryAmount)||0)-(Number(s.totalBuy)||0);}
   }
-  return{sales,profit,pending,stock,purchases,shIn,offlineIn,refund,shPendingCount,shInCount,refundCount};
+  return{sales,profit,pending,stock,purchases,shIn,offlineIn,refund,refundCash,shPendingCount,shInCount,refundCount};
 }
 function bulkShopeeIn(i){let s=db.bulkSales[i];if(!s||s.channel!=='SHOPEE'||s.payStatus!=='PENDING')return;let got=Number(prompt('Nominal saldo Shopee yang BENAR-BENAR masuk (Rp):',s.totalSell))||0;if(got<=0)return;s.payStatus='MASUK';s.receivedAmount=got;s.fundsReceivedAt=new Date().toISOString();if(db.actualBusinessCash!=null&&window.v7CashAdjust)window.v7CashAdjust(got,'Saldo Shopee bulk masuk: '+s.model);db.auditEvents=db.auditEvents||[];db.auditEvents.push({at:new Date().toISOString(),action:'bulk_funds_received',entity:'bulkSales',saleId:s.id,amount:got,reason:'Saldo Shopee bulk benar-benar diterima'});save();}
 function bulkShopeeRefund(i){let s=db.bulkSales[i];if(!s||s.channel!=='SHOPEE'||!['PENDING','MASUK'].includes(s.payStatus))return;let amt=Number(prompt('Nominal refund (Rp):',s.receivedAmount||s.totalSell))||0;if(amt<=0)return;let ret=confirm('BARANG KEMBALI ke lu?\\n\\nOK = kembali ke stok\\nCancel = tidak kembali');s.payStatus='REFUND';s.refundAmount=amt;s.returned=ret;s.refundDate=new Date().toISOString();if(ret){let x=db.bulk.find(z=>z.id===s.bulkId);if(x){x.archivedAt=null;x.batches=x.batches||[];x.batches.push({date:new Date().toISOString().slice(0,10),qty:s.qty,remaining:s.qty,buyPer:s.totalBuy/s.qty,sellPer:s.sellPer,returnOf:s.id});}}if(s.receivedAmount!=null&&db.actualBusinessCash!=null&&window.v7CashAdjust)window.v7CashAdjust(-Math.min(Number(s.receivedAmount)||0,amt),'Refund Shopee bulk: '+s.model);db.auditEvents=db.auditEvents||[];db.auditEvents.push({at:new Date().toISOString(),action:'bulk_refund',entity:'bulkSales',saleId:s.id,amount:amt,returned:ret,reason:'Refund Shopee bulk'});save();}
@@ -613,9 +604,9 @@ function metrics(){
   let stockLegacy=db.cat.filter(x=>['Ready','STOK RETUR','STOK GARANSI','GARANSI - GANTI'].includes(x.status)).reduce((s,x)=>s+x.buy,0);
   let stock=stockLegacy+bm.stock;
   let wd=wdView.reduce((s,x)=>s+x.amt,0),consume=wdView.filter(x=>x.status==='Dikonsumsi').reduce((s,x)=>s+x.amt,0),saved=wdView.filter(x=>x.status==='Disimpan').reduce((s,x)=>s+x.amt,0);
-  let expense=expView.reduce((s,x)=>s+x.amt,0),expenseBusiness=expView.filter(x=>x.scope==='business').reduce((s,x)=>s+x.amt,0),unclassifiedExpense=expView.filter(x=>(x.scope||'review')==='review').reduce((s,x)=>s+x.amt,0),otherBusinessIncome=(db.otherIncome||[]).filter(x=>inRange(x.date)&&x.scope==='business').reduce((s,x)=>s+(Number(x.amt)||0),0),purchases=catView.reduce((s,x)=>s+x.buy,0)+bm.purchases,refundPaid=catView.filter(x=>x.channel==='SHOPEE'&&x.payStatus==='REFUND'&&x.receivedAmount!=null).reduce((s,x)=>s+(x.refundAmount||0),0);
+  let expense=expView.reduce((s,x)=>s+x.amt,0),expenseBusiness=expView.filter(x=>x.scope==='business').reduce((s,x)=>s+x.amt,0),unclassifiedExpense=expView.filter(x=>(x.scope||'review')==='review').reduce((s,x)=>s+x.amt,0),otherBusinessIncome=(db.otherIncome||[]).filter(x=>inRange(x.date)&&x.scope==='business').reduce((s,x)=>s+(Number(x.amt)||0),0),purchases=catView.filter(x=>x.returnOfIndex==null).reduce((s,x)=>s+x.buy,0)+bm.purchases,refundPaid=catView.filter(x=>x.channel==='SHOPEE'&&x.payStatus==='REFUND'&&x.receivedAmount!=null).reduce((s,x)=>s+(x.refundAmount||0),0);
   let businessNet=profit+otherBusinessIncome-expenseBusiness;
-  let calculatedCash=db.modal+(sales-shPending-bm.pending)-purchases-wd-expense-refundPaid,cash=(db.actualBusinessCash!=null&&!isNaN(Number(db.actualBusinessCash)))?Number(db.actualBusinessCash):calculatedCash,biz=cash+stock+shPending+bm.pending,growth=biz-db.modal,net=profit-consume;
+  let calculatedCash=db.modal+(sales-shPending-bm.pending)-purchases-wd-expense-refundPaid-(bm.refundCash||0),cash=(db.actualBusinessCash!=null&&!isNaN(Number(db.actualBusinessCash)))?Number(db.actualBusinessCash):calculatedCash,biz=cash+stock+shPending+bm.pending,growth=biz-db.modal,net=profit-consume;
   return{sales,profit,stock,wd,consume,saved,expense,expenseBusiness,unclassifiedExpense,otherBusinessIncome,businessNet,cash,biz,growth,net,shPending:shPending+bm.pending,shIn:shIn+bm.shIn,shRefund:shRefund+bm.refund};
 }
 function renderInsights(){
