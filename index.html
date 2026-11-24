@@ -147,6 +147,7 @@ html{min-width:320px;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-
 <button data-page="shop" onclick="show('shop',this)">🛒<br>Shopee</button>
 <button data-page="finhub" onclick="show('finhub',this)">💰<br>Keuangan</button>
 <button data-page="rek" onclick="show('rek',this)">▤<br>Rekap</button>
+<button data-page="anti" onclick="show('anti',this)">🛡️<br>Anti Badai</button>
 </nav>
 <div id="businessCashBox" class="card" style="margin:10px 0">
 <div class="section" style="margin-top:0">💵 Koreksi Saldo Cash Bisnis</div>
@@ -344,6 +345,53 @@ html{min-width:320px;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-
 <div class="card"><div class="label">BARANG / MODEL</div><div class="tablewrap"><table><thead><tr><th>Model</th><th>Kategori</th><th>Kali</th><th>Profit</th></tr></thead><tbody id="modelBody"></tbody></table></div></div>
 </div>
 <div class="section">Status ringkas</div><div class="card"><div id="rekStatus"></div></div>
+</section>
+
+<section id="anti" class="page">
+<div class="section">🛡️ Anti Badai — Pusat Keputusan Bisnis</div>
+<div class="card"><div class="label">ATURAN UTAMA</div><div style="font-weight:900;font-size:17px;margin-top:6px">Owner dibayar dari laba yang benar-benar terealisasi.</div><div class="small" style="margin-top:6px">Kalau laba bersih hari ini nol atau minus, rekomendasi gaji dan bonus otomatis nol. Pesanan pending tidak dihitung sebagai uang cair. Sistem hanya memberi rekomendasi alokasi; tidak memindahkan uang sendiri.</div></div>
+<div class="section">1. Gaji owner & bonus harian</div>
+<div class="grid">
+<div class="card"><div class="label">LABA BERSIH HARI INI</div><div class="value" id="abTodayProfit">-</div><div class="small" id="abTodayNote"></div></div>
+<div class="card"><div class="label">GAJI OWNER DISARANKAN</div><div class="value good" id="abSalary">-</div><div class="small">Hanya jika laba bersih positif</div></div>
+<div class="card"><div class="label">BONUS OWNER</div><div class="value" id="abBonus">-</div><div class="small" id="abBonusNote"></div></div>
+<div class="card"><div class="label">TOTAL HAK OWNER</div><div class="value" id="abOwnerTotal">-</div><div class="small">Gaji + bonus hari ini</div></div>
+</div>
+<div class="section">2. Pembagian laba otomatis (rekomendasi)</div>
+<div class="grid">
+<div class="card"><div class="label">TABUNGAN / CADANGAN BISNIS</div><div class="value" id="abReserve">-</div><div class="small" id="abReservePct"></div></div>
+<div class="card"><div class="label">MODAL PUTAR / RESTOCK</div><div class="value" id="abRestock">-</div><div class="small" id="abRestockPct"></div></div>
+<div class="card"><div class="label">OPERASIONAL & BUFFER</div><div class="value" id="abOps">-</div><div class="small" id="abOpsPct"></div></div>
+<div class="card"><div class="label">SISA YANG BELUM DIALOKASIKAN</div><div class="value" id="abUnallocated">-</div><div class="small">Harus nol jika persentase tepat 100%</div></div>
+</div>
+<div class="section">3. Perkiraan jika semua stok aktif terjual</div>
+<div class="grid">
+<div class="card"><div class="label">NILAI JUAL POTENSIAL</div><div class="value" id="abStockSales">-</div></div>
+<div class="card"><div class="label">MODAL STOK AKTIF</div><div class="value" id="abStockCost">-</div></div>
+<div class="card"><div class="label">POTENSI LABA KOTOR</div><div class="value good" id="abStockProfit">-</div></div>
+<div class="card"><div class="label">ITEM HARGA JUAL BELUM DIISI</div><div class="value" id="abMissingPrice">-</div></div>
+</div>
+<div class="card" style="margin-top:9px"><div class="small">Ini proyeksi, bukan laba yang sudah masuk. Harga jual barang satuan mengikuti harga jual tersimpan; stok bulk dihitung per batch. Barang tanpa harga jual tidak dipaksakan masuk estimasi.</div><div id="abStockDetail" style="margin-top:8px"></div></div>
+<div class="section">4. Target laba bersih bisnis Rp7 juta / bulan</div>
+<div class="grid">
+<div class="card"><div class="label">TARGET BULANAN</div><div class="value" id="abTarget">-</div></div>
+<div class="card"><div class="label">LABA BERSIH 30 HARI</div><div class="value" id="abLast30">-</div></div>
+<div class="card"><div class="label">KEBUTUHAN LABA / HARI</div><div class="value" id="abNeedDaily">-</div></div>
+<div class="card"><div class="label">RATA-RATA LABA / HARI (30 HARI)</div><div class="value" id="abAvgDaily">-</div></div>
+</div>
+<div class="card" style="margin-top:9px"><div id="abTargetAdvice"></div></div>
+<div class="section">5. Prioritas tindakan</div><div class="card"><div id="abPriorities"></div></div>
+<div class="section">6. Pengaturan Anti Badai</div>
+<div class="card"><div class="form">
+<div><label>Target laba bersih bulanan (Rp)</label><input id="abSetTarget" type="number" min="0"></div>
+<div><label>Gaji owner dari laba (%)</label><input id="abSetSalary" type="number" min="0" max="100"></div>
+<div><label>Bonus jika laba harian minimal (Rp)</label><input id="abSetBonusMin" type="number" min="0"></div>
+<div><label>Bonus owner dari laba (%)</label><input id="abSetBonusPct" type="number" min="0" max="100"></div>
+<div><label>Tabungan bisnis (%)</label><input id="abSetReserve" type="number" min="0" max="100"></div>
+<div><label>Modal putar / restock (%)</label><input id="abSetRestock" type="number" min="0" max="100"></div>
+<div><label>Operasional & buffer (%)</label><input id="abSetOps" type="number" min="0" max="100"></div>
+</div><div class="small" style="margin-top:8px">Default pembagian: owner 20% + bonus 5% (jika laba ≥ Rp500.000), cadangan bisnis 50%, restock 20%, buffer 5%. Total harus 100% saat bonus berlaku. Jika bonus tidak berlaku, porsi bonus tetap di cadangan bisnis.</div>
+<div class="actions"><button class="btn primary" onclick="saveAntiBadaiSettings()">Simpan Aturan Anti Badai</button><button class="btn ghost" onclick="renderAntiBadai()">Hitung Ulang</button></div><div id="abSettingsMsg" class="small" style="margin-top:7px"></div></div>
 </section>
 </main>
 <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1081,6 +1129,90 @@ function saveCatEditor(){
   };
   window.v2RenderStoreSyncList();
 
+})();
+</script>
+
+<script id="anti-badai-engine">
+(function(){
+  const defaults={target:7000000,salaryPct:20,bonusMin:500000,bonusPct:5,reservePct:50,restockPct:20,opsPct:5};
+  if(!db.antiBadai||typeof db.antiBadai!=='object')db.antiBadai={...defaults};
+  else db.antiBadai={...defaults,...db.antiBadai};
+  function abDate(x){return String(x?.soldAt||x?.date||'').slice(0,10);}
+  function abSum(a,fn){return a.reduce((n,x)=>n+(Number(fn(x))||0),0);}
+  function abDaily(key){
+    const cats=(db.cat||[]).filter(x=>x.status==='SOLD'&&x.payStatus!=='PENDING'&&abDate(x)===key);
+    const bulk=(db.bulkSales||[]).filter(x=>x.payStatus!=='PENDING'&&abDate(x)===key);
+    const gar=(db.gar||[]).filter(x=>abDate(x)===key);
+    const sales=abSum(cats,x=>(Number(x.receivedAmount??x.sell)||0)-(Number(x.buy)||0))
+      +abSum(bulk,x=>Number(x.totalSell??(x.qty*x.sellPer)) - Number(x.totalBuy))
+      +abSum(gar,x=>x.b===null||x.b===undefined?Number(x.sell)-Number(x.a):x.rec==null?0:Number(x.sell)-Number(x.a)-Number(x.b)+Number(x.rec));
+    const expenses=abSum((db.exp||[]).filter(x=>x.date===key&&x.scope==='business'),x=>x.amt);
+    return {profit:sales-expenses,sales,expenses,tx:cats.length+bulk.length+gar.length};
+  }
+  function abStock(){
+    let cost=0,sell=0,profit=0,missing=0,items=[];
+    (db.cat||[]).forEach(x=>{
+      if(!['Ready','STOK RETUR','STOK GARANSI','GARANSI - GANTI'].includes(x.status))return;
+      const c=Number(x.buy)||0,p=Number(x.sell)||0;cost+=c;
+      if(p>0){sell+=p;profit+=p-c;}else missing++;
+      items.push({name:(x.model||'Barang')+' '+(x.cap||''),cost:c,sell:p,profit:p>0?p-c:null});
+    });
+    (db.bulk||[]).forEach(x=>(x.batches||[]).forEach(b=>{
+      const qty=Math.max(0,Number(b.remaining)||0),c=Number(b.buyPer)||0,p=Number(b.sellPer||x.defaultSell)||0;
+      if(!qty)return;cost+=qty*c;
+      if(p>0){sell+=qty*p;profit+=qty*(p-c);}else missing+=qty;
+      items.push({name:(x.model||'Bulk')+' × '+qty,cost:qty*c,sell:p>0?qty*p:0,profit:p>0?qty*(p-c):null});
+    }));
+    return{cost,sell,profit,missing,items};
+  }
+  function abLast30(){
+    const now=new Date(),end=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    let total=0,days=0;
+    for(let i=0;i<30;i++){const d=new Date(end);d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);const v=abDaily(k);total+=v.profit;if(v.tx||v.expenses)days++;}
+    return{total,days,avg:total/30};
+  }
+  window.saveAntiBadaiSettings=function(){
+    const v={target:Math.max(0,+$('abSetTarget').value||0),salaryPct:+$('abSetSalary').value,bonusMin:Math.max(0,+$('abSetBonusMin').value||0),bonusPct:+$('abSetBonusPct').value,reservePct:+$('abSetReserve').value,restockPct:+$('abSetRestock').value,opsPct:+$('abSetOps').value};
+    const nums=[v.salaryPct,v.bonusPct,v.reservePct,v.restockPct,v.opsPct];
+    if(nums.some(x=>!Number.isFinite(x)||x<0||x>100)||v.salaryPct+v.bonusPct+v.reservePct+v.restockPct+v.opsPct!==100)return $('abSettingsMsg').textContent='Gagal: persentase harus 0–100 dan total seluruh alokasi tepat 100%.';
+    db.antiBadai=v;save();$('abSettingsMsg').textContent='Aturan tersimpan. Perhitungan diperbarui.';
+  };
+  window.renderAntiBadai=function(){
+    if(!$('anti'))return;
+    const cfg=db.antiBadai||defaults,key=new Date().toISOString().slice(0,10),d=abDaily(key),b=abStock(),h=abLast30();
+    const salary=d.profit>0?d.profit*cfg.salaryPct/100:0;
+    const bonus=d.profit>=cfg.bonusMin&&d.profit>0?d.profit*cfg.bonusPct/100:0;
+    const reserve=d.profit>0?d.profit*(cfg.reservePct+(bonus?0:cfg.bonusPct))/100:0;
+    const restock=d.profit>0?d.profit*cfg.restockPct/100:0,ops=d.profit>0?d.profit*cfg.opsPct/100:0;
+    const money=(id,v)=>{const e=$(id);if(e)e.textContent=rp(v);};
+    money('abTodayProfit',d.profit);money('abSalary',salary);money('abBonus',bonus);money('abOwnerTotal',salary+bonus);
+    $('abTodayNote').textContent=d.tx+' transaksi terealisasi • biaya operasional '+rp(d.expenses);
+    $('abBonusNote').textContent=bonus?'Bonus aktif karena laba harian mencapai batas.':'Bonus belum aktif; porsinya dialihkan ke tabungan bisnis.';
+    money('abReserve',reserve);money('abRestock',restock);money('abOps',ops);money('abUnallocated',Math.max(0,d.profit-salary-bonus-reserve-restock-ops));
+    $('abReservePct').textContent=(cfg.reservePct+(bonus?0:cfg.bonusPct))+'% dari laba positif';
+    $('abRestockPct').textContent=cfg.restockPct+'% dari laba positif';$('abOpsPct').textContent=cfg.opsPct+'% dari laba positif';
+    money('abStockSales',b.sell);money('abStockCost',b.cost);money('abStockProfit',b.profit);$('abMissingPrice').textContent=b.missing+' unit';
+    $('abStockDetail').innerHTML=b.items.length?'<div class="small"><b>Rincian stok dengan potensi laba tertinggi:</b></div>'+b.items.filter(x=>x.profit!==null).sort((a,z)=>z.profit-a.profit).slice(0,8).map(x=>'<div class="fixed-row"><span>'+esc(x.name)+'</span><b>'+rp(x.profit)+'</b></div>').join(''):'Belum ada stok aktif yang bisa dihitung.';
+    money('abTarget',cfg.target);money('abLast30',h.total);money('abNeedDaily',cfg.target/30);money('abAvgDaily',h.avg);
+    const need=cfg.target/30,ratio=need>0?h.avg/need:0;
+    $('abTargetAdvice').innerHTML=ratio>=1?'<b class="good">Kecepatan laba 30 hari sudah memenuhi target.</b> Pertahankan margin dan jangan menaikkan pengambilan owner tanpa menjaga cadangan.':'<b class="warn">Target belum tercapai.</b> Butuh rata-rata '+rp(need)+' laba bersih per hari. Saat ini rata-rata 30 hari '+rp(h.avg)+'. '+(h.avg>0?'Kecepatan sekarang sekitar '+Math.round(ratio*100)+'% dari target.':'Belum ada laba positif terukur; fokus validasi data dan penjualan dulu.')+'';
+    const ready=(db.cat||[]).filter(x=>['Ready','STOK RETUR'].includes(x.status));
+    const old=ready.filter(x=>{let dt=new Date(x.date||key),age=(new Date(key)-dt)/86400000;return age>=30;}).length;
+    const missing=b.missing;
+    const priorities=[];
+    if(d.profit<=0)priorities.push('Tahan gaji dan bonus owner hari ini. Jangan ambil uang bisnis jika laba terealisasi belum positif.');
+    if(missing)priorities.push('Lengkapi harga jual '+missing+' unit yang belum punya harga; tanpa itu proyeksi laba stok belum lengkap.');
+    if(old)priorities.push('Evaluasi '+old+' barang aktif yang sudah ≥30 hari: bundling, turunkan margin secara terukur, atau lepas stok lambat.');
+    priorities.push('Utamakan jual barang ready dengan potensi margin terbesar sebelum belanja stok baru yang perputarannya belum terbukti.');
+    priorities.push('Pisahkan tabungan bisnis '+cfg.reservePct+'% dari laba; jangan gunakan cadangan untuk kebutuhan pribadi atau spekulasi stok.');
+    if(h.avg<need)priorities.push('Untuk mengejar Rp7 juta/bulan, kejar tambahan laba harian minimal '+rp(Math.max(0,need-h.avg))+' di atas rata-rata saat ini; ukur dari laba bersih, bukan omzet.');
+    $('abPriorities').innerHTML=priorities.map((x,i)=>'<div class="fixed-row"><span>'+(i+1)+'. '+esc(x)+'</span></div>').join('');
+    const ids={abSetTarget:cfg.target,abSetSalary:cfg.salaryPct,abSetBonusMin:cfg.bonusMin,abSetBonusPct:cfg.bonusPct,abSetReserve:cfg.reservePct,abSetRestock:cfg.restockPct,abSetOps:cfg.opsPct};
+    Object.entries(ids).forEach(([id,v])=>{if($(id)&&document.activeElement!==$(id))$(id).value=v;});
+  };
+  const oldRender=window.render;
+  window.render=function(){oldRender.apply(this,arguments);window.renderAntiBadai();};
+  window.renderAntiBadai();
 })();
 </script>
 </body></html>
