@@ -34,7 +34,15 @@ header{background:rgba(6,22,36,.94);backdrop-filter:blur(14px);border-bottom:1px
   body.sidebar-collapsed header,body.sidebar-collapsed main{margin-left:0 !important}
   body.sidebar-collapsed #sidebarToggle{left:14px}
 }
-@media(max-width:900px){#sidebarToggle{display:none!important}}
+@media(max-width:900px){
+#sidebarToggle{display:none!important}
+#mobileMenuToggle{display:grid!important;place-items:center;cursor:pointer}
+nav{top:0;bottom:0;left:0;right:auto;width:min(82vw,280px);height:100dvh;padding:78px 12px 18px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:8px;overflow-y:auto;transform:translateX(-105%);transition:transform .22s ease;z-index:110;border-top:0;border-right:1px solid #1d4964;box-shadow:12px 0 32px rgba(0,0,0,.35)}
+nav button{min-height:54px;justify-content:flex-start;text-align:left;padding:10px 13px;font-size:14px;flex:0 0 auto}
+body.mobile-menu-open nav{transform:translateX(0)}
+body.mobile-menu-open:after{content:"";position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:100}
+header{z-index:90}
+}
 
 header h1{font-size:20px;letter-spacing:-.3px}.sub{color:#9fb8cc;font-size:11px}
 nav{position:fixed;left:0;right:0;bottom:0;top:auto;height:68px;padding:7px 7px calc(7px + env(safe-area-inset-bottom));background:rgba(6,19,31,.97);backdrop-filter:blur(16px);border-top:1px solid #18374d;border-bottom:0;z-index:50;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;overflow:visible}
@@ -140,7 +148,7 @@ html{min-width:320px;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-
 </head>
 <body>
 <button id="sidebarToggle" type="button" aria-label="Sembunyikan menu" title="Sembunyikan menu" onclick="toggleSidebar()">‹</button>
-<header><div style="display:flex;align-items:center;gap:11px"><img src="icon-192.png" alt="MR ALL" style="width:52px;height:52px;border-radius:14px;object-fit:cover"><div style="min-width:0"><h1>MR ALL — SISTEM DAGANG</h1><div class="sub">V5 INTELLIGENCE • sederhana di depan, otomatis di belakang</div></div></div></header>
+<header><div style="display:flex;align-items:center;gap:11px"><button id="mobileMenuToggle" type="button" aria-label="Buka menu" onclick="toggleMobileMenu()" style="display:none;flex:0 0 44px;width:44px;height:44px;border:1px solid #28536d;border-radius:11px;background:#0d2a3f;color:#fff;font-size:24px;font-weight:900">☰</button><img src="icon-192.png" alt="MR ALL" style="width:52px;height:52px;border-radius:14px;object-fit:cover"><div style="min-width:0"><h1>MR ALL — SISTEM DAGANG</h1><div class="sub">V5 INTELLIGENCE • sederhana di depan, otomatis di belakang</div></div></div></header>
 <nav>
 <button class="active" data-page="dash" onclick="show('dash',this)">⌂<br>Beranda</button>
 <button data-page="cat" onclick="show('cat',this)">▣<br>Catatan</button>
@@ -759,6 +767,21 @@ if ('serviceWorker' in navigator) {
 
 
 <script>
+function toggleMobileMenu(){
+  document.body.classList.toggle('mobile-menu-open');
+  const b=document.getElementById('mobileMenuToggle');
+  if(b){const open=document.body.classList.contains('mobile-menu-open');b.textContent=open?'×':'☰';b.setAttribute('aria-label',open?'Tutup menu':'Buka menu');}
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest('nav button') && document.body.classList.contains('mobile-menu-open')){
+    document.body.classList.remove('mobile-menu-open');
+    const b=document.getElementById('mobileMenuToggle');if(b){b.textContent='☰';b.setAttribute('aria-label','Buka menu');}
+  }
+  if(e.target===document.body && document.body.classList.contains('mobile-menu-open')){
+    document.body.classList.remove('mobile-menu-open');
+    const b=document.getElementById('mobileMenuToggle');if(b){b.textContent='☰';b.setAttribute('aria-label','Buka menu');}
+  }
+});
 function toggleSidebar(){
   document.body.classList.toggle('sidebar-collapsed');
   const hidden=document.body.classList.contains('sidebar-collapsed');
