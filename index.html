@@ -179,6 +179,33 @@ html{min-width:320px;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-
   header{position:relative!important;z-index:90!important}
 }
 </style>
+<style id="mrall-mobile-layout-last">
+@media(max-width:900px){
+ html,body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+ body{display:block!important;margin:0!important;padding:0 0 calc(78px + env(safe-area-inset-bottom))!important}
+ header{position:relative!important;left:auto!important;right:auto!important;top:auto!important;margin:8px 8px 12px!important;width:auto!important;max-width:none!important;transform:none!important;z-index:90!important;display:block!important}
+ header>div{width:100%!important;min-width:0!important;display:flex!important;align-items:center!important;gap:9px!important}
+ #mobileMenuToggle{display:grid!important;place-items:center!important;flex:0 0 44px!important;width:44px!important;height:44px!important;position:relative!important;z-index:120!important}
+ header img{width:44px!important;height:44px!important;flex:0 0 44px!important}
+ header h1{font-size:clamp(16px,4.5vw,20px)!important;line-height:1.2!important;overflow-wrap:anywhere!important}
+ header .sub{font-size:12px!important;line-height:1.3!important}
+ main{display:block!important;position:relative!important;left:auto!important;right:auto!important;margin:0!important;padding:8px!important;width:100%!important;max-width:100%!important;transform:none!important}
+ nav{
+  position:fixed!important;top:0!important;bottom:0!important;left:0!important;right:auto!important;
+  width:min(82vw,290px)!important;height:100vh!important;height:100dvh!important;
+  margin:0!important;padding:78px 12px 20px!important;box-sizing:border-box!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+  gap:8px!important;overflow-y:auto!important;overflow-x:hidden!important;
+  transform:translateX(-110%)!important;transition:transform .22s ease!important;
+  z-index:110!important;background:#061723!important;border:0!important;border-right:1px solid #1d4964!important;
+  box-shadow:12px 0 32px rgba(0,0,0,.38)!important
+ }
+ nav button{display:block!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;min-height:54px!important;text-align:left!important;justify-content:flex-start!important;padding:12px 14px!important;font-size:14px!important}
+ body.mobile-menu-open nav{transform:translateX(0)!important}
+ body.mobile-menu-open:after{content:"";position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;pointer-events:auto}
+ body.mobile-menu-open{overflow:hidden!important}
+}
+</style>
 </head>
 <body>
 <button id="sidebarToggle" type="button" aria-label="Sembunyikan menu" title="Sembunyikan menu" onclick="toggleSidebar()">‹</button>
