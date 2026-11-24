@@ -1137,6 +1137,7 @@ function saveCatEditor(){
   const defaults={target:7000000,salaryPct:20,bonusMin:500000,bonusPct:5,reservePct:50,restockPct:20,opsPct:5};
   if(!db.antiBadai||typeof db.antiBadai!=='object')db.antiBadai={...defaults};
   else db.antiBadai={...defaults,...db.antiBadai};
+  function abLocalKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function abDate(x){return String(x?.soldAt||x?.date||'').slice(0,10);}
   function abSum(a,fn){return a.reduce((n,x)=>n+(Number(fn(x))||0),0);}
   function abDaily(key){
@@ -1168,7 +1169,7 @@ function saveCatEditor(){
   function abLast30(){
     const now=new Date(),end=new Date(now.getFullYear(),now.getMonth(),now.getDate());
     let total=0,days=0;
-    for(let i=0;i<30;i++){const d=new Date(end);d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);const v=abDaily(k);total+=v.profit;if(v.tx||v.expenses)days++;}
+    for(let i=0;i<30;i++){const d=new Date(end);d.setDate(d.getDate()-i);const k=abLocalKey(d);const v=abDaily(k);total+=v.profit;if(v.tx||v.expenses)days++;}
     return{total,days,avg:total/30};
   }
   window.saveAntiBadaiSettings=function(){
@@ -1179,7 +1180,7 @@ function saveCatEditor(){
   };
   window.renderAntiBadai=function(){
     if(!$('anti'))return;
-    const cfg=db.antiBadai||defaults,key=new Date().toISOString().slice(0,10),d=abDaily(key),b=abStock(),h=abLast30();
+    const cfg=db.antiBadai||defaults,key=abLocalKey(new Date()),d=abDaily(key),b=abStock(),h=abLast30();
     const salary=d.profit>0?d.profit*cfg.salaryPct/100:0;
     const bonus=d.profit>=cfg.bonusMin&&d.profit>0?d.profit*cfg.bonusPct/100:0;
     const reserve=d.profit>0?d.profit*(cfg.reservePct+(bonus?0:cfg.bonusPct))/100:0;
