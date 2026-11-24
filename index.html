@@ -218,6 +218,28 @@ body.mobile-menu-open:after{content:"";position:fixed;inset:0;background:rgba(0,
 main{margin-left:0!important;width:100%!important}
 }
 </style>
+
+<style id="mrall-sidebar-final-fix">
+#mobileMenuToggle{display:none;flex:0 0 44px;width:44px;height:44px;place-items:center;border:1px solid #28536d;border-radius:11px;background:#0d2a3f;color:#fff;font-size:23px;font-weight:900}
+@media(max-width:900px){
+#mobileMenuToggle{display:grid!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:140!important}
+#sidebarToggle{display:none!important}
+header{margin:8px 8px 12px!important;padding:10px 10px!important;width:auto!important;max-width:none!important;position:relative!important;z-index:130!important;box-sizing:border-box!important}
+.v7-headrow{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:8px!important;min-width:0!important}
+.v7-brand{flex:1 1 auto!important;min-width:0!important;gap:8px!important}
+.v7-brand>div{min-width:0!important}
+.v7-logo{width:42px!important;height:42px!important;flex:0 0 42px!important}
+.v7-brand h1{font-size:clamp(15px,4.1vw,19px)!important;line-height:1.15!important;overflow-wrap:anywhere!important}
+.v7-brand .sub{font-size:10px!important;line-height:1.25!important}
+.v7-search,.v7-head-actions{display:none!important}
+nav{position:fixed!important;display:flex!important;top:0!important;bottom:0!important;left:0!important;right:auto!important;width:min(82vw,290px)!important;height:100vh!important;height:100dvh!important;margin:0!important;padding:78px 12px 20px!important;box-sizing:border-box!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:8px!important;overflow-y:auto!important;overflow-x:hidden!important;transform:translateX(-110%)!important;transition:transform .22s ease!important;z-index:135!important;background:#061723!important;border:0!important;border-right:1px solid #1d4964!important;box-shadow:12px 0 32px rgba(0,0,0,.38)!important}
+nav button{display:block!important;visibility:visible!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;min-height:50px!important;text-align:left!important;justify-content:flex-start!important;padding:11px 14px!important;font-size:13px!important}
+body.mobile-menu-open nav{transform:translateX(0)!important}
+body.mobile-menu-open:after{content:"";position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:125;pointer-events:auto}
+main{margin:0!important;width:100%!important;max-width:100%!important;padding:10px!important}
+}
+@media(min-width:901px){#mobileMenuToggle{display:none!important}}
+</style>
 </head>
 <body>
 <button id="sidebarToggle" type="button" aria-label="Sembunyikan menu" title="Sembunyikan menu" onclick="toggleSidebar()">‹</button>
@@ -924,9 +946,28 @@ body{overflow-x:hidden}
   addPage('notifications','🔔 Notifikasi',`<div id="v7NotifBody"></div>`);
 
   const nav=document.querySelector('nav');
-  nav.innerHTML=`<button data-page="dash" class="active" onclick="show('dash',this)">⌂<br>Beranda</button><button data-page="stock" onclick="show('stock',this)">▣<br>Stok Barang</button><button data-page="titipan" onclick="show('titipan',this)">📦<br>Barang Titipan</button><button data-page="cat" onclick="show('cat',this)">▤<br>Transaksi</button><button data-page="shop" onclick="show('shop',this)">🛒<br>Shopee</button><button data-page="finhub" onclick="show('finhub',this)">💼<br>Keuangan</button><button data-page="bank" onclick="show('bank',this)">🏦<br>Bank & Transfer</button><button data-page="debt" onclick="show('debt',this)">💳<br>Hutang</button><button data-page="piutang" onclick="show('piutang',this)">💰<br>Piutang</button><button data-page="exp" onclick="show('exp',this)">📉<br>Pengeluaran</button><button data-page="otherincome" onclick="show('otherincome',this)">💵<br>Uang Masuk Lain</button><button data-page="rek" onclick="show('rek',this)">📊<br>Laporan</button><button data-page="bak" onclick="show('bak',this)">💾<br>Backup</button>`;
+  nav.innerHTML=\`
+    <button data-page="dash" class="active" onclick="show('dash',this)">⌂<br>Beranda</button>
+    <button data-page="stock" onclick="show('stock',this)">▣<br>Stok Barang</button>
+    <button data-page="titipan" onclick="show('titipan',this)">📦<br>Barang Titipan</button>
+    <button data-page="cat" onclick="show('cat',this)">▤<br>Transaksi</button>
+    <button data-page="shop" onclick="show('shop',this)">🛒<br>Shopee</button>
+    <button data-page="finhub" onclick="show('finhub',this)">💼<br>Keuangan</button>
+    <button data-page="bank" onclick="show('bank',this)">🏦<br>Bank & Transfer</button>
+    <button data-page="debt" onclick="show('debt',this)">💳<br>Hutang</button>
+    <button data-page="piutang" onclick="show('piutang',this)">💰<br>Piutang</button>
+    <button data-page="exp" onclick="show('exp',this)">📉<br>Pengeluaran</button>
+    <button data-page="otherincome" onclick="show('otherincome',this)">💵<br>Uang Masuk Lain</button>
+    <button data-page="rek" onclick="show('rek',this)">📊<br>Laporan</button>
+    <button data-page="bak" onclick="show('bak',this)">💾<br>Backup</button>
+    <button data-page="v2pos" onclick="show('v2pos',this)">🧾<br>Kasir</button>
+    <button data-page="ownerdraw" onclick="show('ownerdraw',this)">💼<br>WD Owner</button>
+    <button data-page="v2closing" onclick="show('v2closing',this)">🌙<br>Tutup Hari</button>
+    <button data-page="cloudsync" onclick="show('cloudsync',this)">☁️<br>Cloud</button>
+    <button data-page="anti" onclick="show('anti',this)">🛡️<br>Anti Badai</button>
+  \`;
   const header=document.querySelector('header');
-  header.innerHTML=`<div class="v7-headrow"><div class="v7-brand"><img class="v7-logo" src="icon-192.png"><div><h1>MR ALL — SISTEM DAGANG</h1><div class="sub">BUSINESS V2 • modal, stok, profit dan cash dipisah</div></div></div><div class="v7-search">⌕<input id="v7Search" placeholder="Cari barang, transaksi, atau apa saja..." oninput="v7Search(this.value)"></div><div class="v7-head-actions"><button class="v7-iconbtn" onclick="document.body.classList.toggle('v7-glow')">☼</button><button class="v7-iconbtn" onclick="show('notifications',this)">🔔</button></div></div>`;
+  header.innerHTML=\`<div class="v7-headrow"><button id="mobileMenuToggle" type="button" aria-label="Buka menu" title="Buka menu" onclick="toggleMobileMenu()">☰</button><div class="v7-brand"><img class="v7-logo" src="icon-192.png"><div><h1>MR ALL — SISTEM DAGANG</h1><div class="sub">BUSINESS V2 • modal, stok, profit dan cash dipisah</div></div></div><div class="v7-search">⌕<input id="v7Search" placeholder="Cari barang, transaksi, atau apa saja..." oninput="v7Search(this.value)"></div><div class="v7-head-actions"><button class="v7-iconbtn" onclick="document.body.classList.toggle('v7-glow')">☼</button><button class="v7-iconbtn" onclick="show('notifications',this)">🔔</button></div></div>\`
   const dash=document.getElementById('dash');
   const oldHero=dash.querySelector('.home-hero');
   const top=document.createElement('div');top.id='v7Top';top.innerHTML=`<div class="v7-banner"><h2>MR ALL IN Business</h2><p>Komputer • Laptop • Komponen • Aksesori • Jasa</p><p style="margin-top:12px;color:#f5d77d;font-weight:800">Dari hobi jadi peluang. Semua uang dagangan kebaca jelas.</p></div><div class="v7-kpis"><div class="v7-kpi"><div class="k">💼 Cash Bisnis</div><div class="v" id="v7Cash">-</div><div class="s" id="v7CashSub">BCA + SeaBank + blu</div></div><div class="v7-kpi"><div class="k">📦 Modal Stok</div><div class="v" id="v7Stock">-</div><div class="s" id="v7StockSub">-</div></div><div class="v7-kpi"><div class="k">🛒 Shopee / COD Pending</div><div class="v warn" id="v7Shop">-</div><div class="s" id="v7ShopSub">-</div></div><div class="v7-kpi"><div class="k">📈 Profit Kotor</div><div class="v good" id="v7Profit">-</div><div class="s" id="v7ProfitSub">-</div></div><div class="v7-kpi"><div class="k">🏁 Profit Usaha Bersih</div><div class="v good" id="v7Net">-</div><div class="s" id="v7NetSub">-</div></div></div><div id="v2OpeningNote" class="v7-note" style="margin:10px 0"></div><div class="v7-layout"><div class="v7-panel"><div class="v7-panel-head"><h3>📦 Stok Barang</h3><button class="v7-link" onclick="show('stock',document.querySelector('nav button[data-page=stock]'))">Lihat Semua →</button></div><div id="v7StockGrid" class="v7-stock-grid"></div></div><div class="v7-panel"><div class="v7-panel-head"><h3>📦 Barang Titipan</h3><button class="v7-link" onclick="show('titipan',document.querySelector('nav button[data-page=titipan]'))">Lihat Semua →</button></div><div id="v7TitipanDash" class="v7-list"></div><button class="btn primary" style="width:100%;margin-top:8px" onclick="show('titipan',document.querySelector('nav button[data-page=titipan]'))">＋ Tambah Titipan</button></div></div><div class="v7-bottom-grid"><div class="v7-panel v7-mini"><h3>🏦 Keuangan per Bank</h3><div id="v7Banks"></div></div><div class="v7-panel v7-mini"><h3>🔔 Notifikasi & Pengingat</h3><div id="v7Alerts"></div></div><div class="v7-panel v7-mini"><h3>💳 Hutang</h3><div class="big v7-danger" id="v7Debt">-</div><div class="small">Kewajiban belum lunas</div><button class="btn ghost" style="margin-top:9px" onclick="show('debt',document.querySelector('nav button[data-page=debt]'))">Kelola Hutang</button></div><div class="v7-panel v7-mini"><h3>💰 Piutang</h3><div class="big v7-good" id="v7Receivable">-</div><div class="small">Belum diterima</div><button class="btn ghost" style="margin-top:9px" onclick="show('piutang',document.querySelector('nav button[data-page=piutang]'))">Kelola Piutang</button></div></div>`;
